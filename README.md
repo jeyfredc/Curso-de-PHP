@@ -9,7 +9,7 @@ Curso de php realizado en Platzi
 
 [Clase 4 Revisando el template que usaremos](#Clase-4-Revisando-el-template-que-usaremos)
 
-[]()
+[Clase 5 Sintaxis de PHP](#Clase-5-Sintaxis-de-PHP)
 
 []()
 
@@ -143,3 +143,5 @@ http://localhost/curso_php/
 si todo quedo correcto ya es posible visualizar la pagina que se muestra en el curso
 
 ![assets/5.png](assets/5.png)
+
+## Clase 5 Sintaxis de PHP
