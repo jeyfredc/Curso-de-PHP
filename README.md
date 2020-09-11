@@ -120,7 +120,7 @@ sudo /opt/lampp/manager-linux-x64.run
 
 ## Clase 4 Revisando el template que usaremos
 
-Descargar en el repositorio el archivo llamado **index.html** y **style.css**, los cuales se empezaran a modificar a medida que avance el curso 
+Descargar en el repositorio  en la carpeta **archivos_descarga** el archivo llamado **index.html** y **style.css**, los cuales se empezaran a modificar a medida que avance el curso 
 
 el archivo en **linux** se debe descargar en el sistema de archivos
 
@@ -142,6 +142,48 @@ http://localhost/curso_php/
 
 si todo quedo correcto ya es posible visualizar la pagina que se muestra en el curso
 
-![assets/5.png](assets/5.png)
+
 
 ## Clase 5 Sintaxis de PHP
+
+en la carpeta **curso_php** crear un nuevo archivo llamado **hello.php**, dentro del archivo la forma para indicar que se abre php es con la siguiente sintaxis, los comentarios se hacen escriben de la siguiente forma **/* */** para varias lineas o para una linea **//**
+
+```
+<?php
+/* Todo lo que este dentro de los dos simbolos sera lo que el servidor va a interpretar y sera lo que va a funcionar con el lenguaje de programacion*/
+?>
+```
+
+Ahora con la instruccion `echo` escribir 'hello PHP'; 
+
+![assets/6.png](assets/6.png)
+
+y en el navegador cambiar la ruta **http://localhost/curso_php/**, esta ruta esta buscando directamente a **index.html**, cambiarla por 
+
+```
+http://localhost/curso_php/hello.php
+```
+
+y a continuacion mostrara en el navegador lo que acabamos de escribir en el archivo **hello.php**
+
+![assets/7.png](assets/7.png)
+
+Ahora se pasa a modificar el archivo **index.html**
+
+en la linea 24 donde aparece `<h1>Hector Benitez</h1>` borrar el nombre y probar con el suyo, pero modificandolo asi 
+
+```
+<?php echo 'Jeyfred Calderon'; ?>
+```
+
+![assets/8.png](assets/8.png)
+
+para que el navegador pueda interpretar PHP el archivo **index.html** se debe renombrar o cambiar su extension por **index.php**
+
+![assets/9.png](assets/9.png)
+
+guardar cambios y nuevamente recargar la ruta anterior **http://localhost/curso_php/**
+
+y de esta forma empezaran a aplicarse los cambios al navegador, si se deja la extension .html no va a aparecer el nombre que se cambio en el archivo
+
+![assets/10.png](assets/10.png)
