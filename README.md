@@ -17,7 +17,7 @@ Curso de php realizado en Platzi
 
 [Clase 8 Arreglos](#Clase-8-Arreglos)
 
-[]()
+[Clase 9 Condicionales y Ciclos](#Clase-9-Condicionales-y-Ciclos)
 
 []()
 
@@ -501,3 +501,103 @@ al recargar el navegador estos valores deben aparecer actualizados
 
 ![assets/17.png](assets/17.png)
 
+## Clase 9 Condicionales y Ciclos
+
+Las condiciones nos permiten tomar decisiones en el código, si se cumple la condición entonces se ejecutarán ciertas instrucciones sino se cumple se ejecutarán otras. Estas se denotan por la instrucción **if else**.
+
+```
+<?php
+$name = "Jeyfred Calderon";
+$jobs = [
+  ['title' => 'PHP Developer',
+    'description' => 'Este es un trabajo asombroso'],
+  ['title' => 'Python Dev'],
+  ['title' => 'Devops']
+];
+
+$var1 = 2;
+if($var1 > 2){// tiene asignado el signo de mayor que , if se lee como si la(condicion) sucede {entonces}
+  echo 'Es mayor que 2';
+}
+elseif($var1 == 2){// tiene asignado el signo de comparacion que esta definido por un doble igual, elseif se lee como si,no(condicion) {entonces}
+  echo 'Es igual que 2';
+}
+else{ // No tiene asignado un simbolo porque ya no se cumple si es mayor o igual , else se lee como de lo contrario la(condicion) sucede {entonces}
+  echo 'Es menor que 2';
+}
+?>
+```
+practicar primero con estos y luego comentarlos con **/* */**, se puede seleccionar todo, en linux con **ctrl + Shift + a** y queda ese pedazo de codigo comentado
+
+```
+/* $var1 = 2;
+if($var1> 2){
+  echo 'Es mayor que 2';
+}
+elseif($var1 == 2){
+  echo 'Es igual que 2';
+}
+else{
+  echo 'Es menor que 2';
+} */
+```
+
+Los ciclos funcionan de la mano con las condiciones, en este caso si se cumple la instrucción se estará ejecutando repetidas veces una instrucción dada.
+
+Hemos agregado los jobs de forma manual accediendo al arreglo a través de sus índices, hacer esto podría traer errores y no podríamos controlarlo si tuviéramos muchos jobs. Ahora veamos una mejor forma de hacerlo con ciclos.
+
+- El primero que tenemos es do while que va a involucrar la inicialización de variables y condiciones. la forma en que se lee es haga mientras algo suceda
+
+en el codigo de **index.php** se va a reemplazar con la siguiente linea de codigo lo que anteriormente se habia hecho en **work-position** por lo siguiente **tener en cuenta** que lo que se esta reemplazanda son las 3 secciones de **work-position**
+
+```
+            <?php
+            $idx = 0;
+            do{
+              echo '<li class="work-position">';
+              echo '<h5>' . $jobs[$idx]['title'] . '</h5>'; //La posicion inicia en 0 y cada vez que llega a while cambia, despues es 1, despues es 2 y despues se rompe la operacion 
+              echo '<p>' . $jobs[$idx]['description'] . '</p>'; 
+              echo '<strong>Achievements:</strong>';
+              echo '<ul>';
+              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+              echo '</ul>';
+              echo '</li>';
+              $idx = $idx +1; // mientras la variable sea menor que 3 es decir posicion 0, 1 y 2 
+            }while($idx < 3);
+          ?>
+```
+
+![assets/18.png](assets/18.png)
+
+Al recargar la pagina la descripcion no va a aparecer porque la descripcion para Python Dev y Devops no se ha creado aun
+
+![assets/19.png](assets/19.png)
+
+
+- El segundo que veremos es for que es una forma más simplificada de usar todos los elementos que componen los ciclos.
+
+se trabaja sobre el mismo de la siguiente forma
+
+```
+            <?php
+            
+            for($idx=0; $idx < 3; $idx++){ // El codigo dice para cada posicion mientras que sea menor que 3 aumente la posicion de 1 en 1  $idx = $idx + 1, se puede sustituir por $idx ++, significa lo mismo
+              echo '<li class="work-position">';
+              echo '<h5>' . $jobs[$idx]['title'] . '</h5>'; //La posicion inicia en 0 cuando llega hasta el cierre del corchete }, despues es 1, despues es 2 y despues se rompe la operacion 
+              echo '<p>' . $jobs[$idx]['description'] . '</p>'; 
+              echo '<strong>Achievements:</strong>';
+              echo '<ul>';
+              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+              echo '</ul>';
+              echo '</li>';
+            }
+          ?>
+```
+
+y se obtiene el mismo resultado que antes pero ahorrando codigo
+
+![assets/19.png](assets/19.png)
