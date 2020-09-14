@@ -483,7 +483,7 @@ $jobs = [
   ['title' => 'PHP Developer',
     'description' => 'Este es un trabajo asombroso'],
   ['title' => 'Python Dev'],
-  [' title' => 'Devops']
+  ['title' => 'Devops']
 ];
 ?>
 ```
@@ -496,3 +496,8 @@ y nuevamente se reemplazan en la parte de **Work position** por
 ```
 
 ![assets/16.png](assets/16.png)
+
+al recargar el navegador estos valores deben aparecer actualizados
+
+![assets/17.png](assets/17.png)
+

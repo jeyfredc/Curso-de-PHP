@@ -4,7 +4,7 @@ $jobs = [
   ['title' => 'PHP Developer',
     'description' => 'Este es un trabajo asombroso'],
   ['title' => 'Python Dev'],
-  [' title' => 'Devops']
+  ['title' => 'Devops']
 ];
 ?>
 
@@ -66,7 +66,7 @@ $jobs = [
               </ul>
             </li>
             <li class="work-position">
-                <h5><?php echo $jobs[0]['title']?></h5>
+                <h5><?php echo $jobs[1]['title']?></h5>
                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi sapiente sed pariatur sint exercitationem eos expedita eveniet veniam ullam, quia neque facilis dicta voluptatibus. Eveniet doloremque ipsum itaque obcaecati nihil.</p>
                 <strong>Achievements:</strong>
                 <ul>
@@ -76,7 +76,7 @@ $jobs = [
                 </ul>
               </li>
               <li class="work-position">
-                  <h5><?php echo $jobs[0]['title']?><r</h5>
+                  <h5><?php echo $jobs[2]['title']?><r</h5>
                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi sapiente sed pariatur sint exercitationem eos expedita eveniet veniam ullam, quia neque facilis dicta voluptatibus. Eveniet doloremque ipsum itaque obcaecati nihil.</p>
                   <strong>Achievements:</strong>
                   <ul>
