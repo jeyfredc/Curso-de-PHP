@@ -583,7 +583,7 @@ se trabaja sobre el mismo de la siguiente forma
 ```
             <?php
             
-            for($idx=0; $idx < 3; $idx++){ // El codigo dice para cada posicion mientras que sea menor que 3 aumente la posicion de 1 en 1  $idx = $idx + 1, se puede sustituir por $idx ++, significa lo mismo
+            for($idx=0; $idx < count($jobs); $idx++){ // El codigo dice para cada posicion mientras que sea menor que 3, (count(jobs) esta contando las posiciones del arreglo, las cuales por el momento son 3) aumente la posicion de 1 en 1  $idx = $idx + 1, se puede sustituir por $idx ++, significa lo mismo
               echo '<li class="work-position">';
               echo '<h5>' . $jobs[$idx]['title'] . '</h5>'; //La posicion inicia en 0 cuando llega hasta el cierre del corchete }, despues es 1, despues es 2 y despues se rompe la operacion 
               echo '<p>' . $jobs[$idx]['description'] . '</p>'; 

@@ -69,7 +69,7 @@ else{
           <ul>
             <?php
             
-            for($idx=0; $idx < 3; $idx++){ 
+            for($idx=0; $idx < count($jobs); $idx++){ 
               echo '<li class="work-position">';
               echo '<h5>' . $jobs[$idx]['title'] . '</h5>';  
               echo '<p>' . $jobs[$idx]['description'] . '</p>'; 
