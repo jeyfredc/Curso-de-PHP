@@ -13,9 +13,9 @@ Curso de php realizado en Platzi
 
 [Clase 6 Variables tipos de datos y cadenas](#Clase-6-Variables-tipos-de-datos-y-cadenas)
 
-[]()
+[Clase 7 Tipos de Datos en PHP](Clase-7-Tipos-de-Datos-en-PHP)
 
-[]()
+[Clase 8 Arreglos](#Clase-8-Arreglos)
 
 []()
 
@@ -403,9 +403,96 @@ Es un tipo de dato especial que representa un recurso externo, por ejemplo un ar
 <?php
 $res = fopen("c:\\dir\\file.txt", "r");
 ?>
-NULL:
+```
+
+**NULL:**
+
 Es un valor especial que se usa para representar una variable sin valor. http://php.net/manual/es/language.types.null.php
+
+```
 <?php
 $a = null; 
 ?>
 ```
+
+## Clase 8 Arreglos
+
+Como vimos en la clase anterior almacenamos datos en una variable, ahora trataremos de almacenar más datos en una misma variable.
+
+Estas variables que almacenan más de un dato se conocen como arreglos y su sintaxis se va a indicar con [ ] (corchetes).
+
+PHP utiliza índices para localizar a los elementos dentro de la variable.
+
+La estructura de arreglos en PHP es conocida como mapa, lo que quiere decir que tiene una composición de llave valor. Además, un arreglo puede contener más arreglos y cada uno de ellos seguirá la misma estructura.
+
+continuando con el archivo **index.php** se estructura el siguiente codigo
+
+```
+<?php
+$name = "Jeyfred Calderon";
+$jobs = [
+  'PHP Developer',
+  'Python Dev',
+  'Devops'
+];
+?>
+
+```
+
+La forma de poder acceder al arreglo o array jobs es a traves de indices, siendo la primer posicion 0, continuando con el ejemplo se establece un `var_dump` para ver su contenido
+
+```
+<?php
+$name = "Jeyfred Calderon";
+$jobs = [
+  'PHP Developer',
+  'Python Dev',
+  'Devops'
+];
+
+?>
+
+```
+
+Al refrescar el navegador sale la primer posicion
+
+![assets/13.png](assets/13.png)
+
+y si por ejemplo se quita `[0]` y se deja solo jobs sin los corchetes se va a imprimir toda la cadena indicando cuantos elementos tiene y cada una de las posiciones con su respectiva longitud
+
+![assets/14.png](assets/14.png)
+
+Tambien es posible pasar los valores en el html en la parte de **Work position** reemplazar el titulo con etiqueta `h5` por 
+
+```
+<h5><?php echo $jobs[0]?></h5>
+```
+
+y realizarlo para las siguientes con cada una de las posiciones
+
+![assets/15.png](assets/15.png)
+
+Tambien existe otra forma de acceder a los arreglos, y se pueden tener arreglos dentro de arreglos.
+
+Nuevamente se modifica el codigo por lo siguiente
+
+```
+<?php
+$name = "Jeyfred Calderon";
+$jobs = [
+  ['title' => 'PHP Developer',
+    'description' => 'Este es un trabajo asombroso'],
+  ['title' => 'Python Dev'],
+  [' title' => 'Devops']
+];
+?>
+```
+
+y nuevamente se reemplazan en la parte de **Work position** por
+
+```
+<h5><?php echo $jobs[0]['title']?></h5>
+<p><?php echo $jobs[0]['description']?></p>
+```
+
+![assets/16.png](assets/16.png)
