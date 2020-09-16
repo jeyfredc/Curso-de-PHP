@@ -23,9 +23,9 @@ Curso de php realizado en Platzi
 
 [Clase 11 While vs. Do While](#Clase-11-While-vs-Do-While)
 
-[]()
+[Clase 12 Operadores, Condicionales, Continue y Break](#Clase-12-Operadores-Condicionales-Continue-y-Break)
 
-[]()
+[Clase 13 Operadores](#Clase-13-Operadores)
 
 
 
@@ -880,3 +880,123 @@ y ahora en el for se va agregar otra condicion donde se le va indicar que solo a
 al recargar la pagina debe salir el primer trabajo el cual duro 6 meses + el segundo que fueron 4 meses, el tercero suma a 15 por tanto se detiene en 10 meses y no imprime mas trabajos
 
 ![assets/20.png](assets/20.png)
+
+## Clase 13 Operadores
+
+Antes de continuar hablando de operadores es importante mencionar que existe un concepto conocido como precedencia de operadores el cual nos permitirá saber en qué orden se deben ejecutar los operadores que se encuentren en una sola sentencia.
+
+Por ejemplo, en la sentencia:
+
+**1 + 2 * 3**
+
+Se ejecutará primero la operación **2 * 3**
+Luego se ejecutará la suma con **1**
+
+Esto es debido a que * tiene más valor en la precedencia que el +.
+
+Una forma sencilla de controlar la precedencia es utilizando () paréntesis, de esta forma podemos forzar el orden que nosotros queramos, por ejemplo (1 + 2) * 3 será una versión diferente y se ejecutará primero la suma y luego la multiplicación.
+
+Te dejo el enlace por si quieres consultar más información al respecto. http://php.net/manual/es/language.operators.precedence.php
+
+Ahora continuemos hablando sobre los tipos de operadores, algunos ya los vimos, pero de igual forma vamos a reforzarlos enfocándonos en los más importantes.
+
+**Operadores aritméticos**
+
+http://php.net/manual/es/language.operators.arithmetic.php
+
+Funcionan para realizar operaciones aritméticas.
+
+![assets/21.png](assets/21.png)
+
+**Operadores de asignación**
+
+http://php.net/manual/es/language.operators.assignment.php
+
+El operador principal de asignación es el símbolo = (igual). Es importante tener en cuenta que este operador no sirve para comparar, normalmente del lado izquierdo del operador tendremos una variable, y este operador sirve para asignar el resultado de lo que se encuentre a la derecha a dicha variable.
+
+$variable = 5;
+
+Lo que tenemos en la derecha puede ser un valor, otra variable, o el resultado de una operación o función.
+
+También existen otros operadores de asignación que se combinan con operadores aritméticos o para strings y nos permiten simplificar algunas sentencias dentro de PHP. Estos son ejemplos de cómo funcionan:
+
+$a += $b
+$a = $a + $b
+
+$a -= $b
+$a = $a - $b
+
+$a *= $b
+$a = $a * $b
+
+$a /= $b
+$a = $a / $b
+
+$a %= $b
+$a = $a % $b
+
+$a .= $b
+$a = $a . $b
+
+**Operadores de comparación**
+
+http://php.net/manual/es/language.operators.comparison.php
+
+Nos permiten comparar valores.
+
+![assets/22.png](assets/22.png)
+
+**Operadores de incremento/decremento**
+
+http://php.net/manual/es/language.operators.increment.php
+
+Permiten incrementar o decrementar un valor en 1.
+
+![assets/23.png](assets/23.png)
+
+Es muy importante entender cómo afecta el lugar donde se establece el operador, ejemplo:
+
+```
+$a = 1;
+echo $a++;
+echo $a;
+echo ++$a;
+echo $a;
+```
+
+imprime
+
+```
+1
+2
+3
+3
+```
+
+**Operadores lógicos**
+
+http://php.net/manual/es/language.operators.logical.php
+
+Nos permiten combinar resultados de comparaciones.
+
+![assets/24.png](assets/24.png)
+
+**Operadores para strings**
+
+Existen 2 operadores para strings el . (punto) que nos permite concatenar cadenas, y el .= que ya fue visto anteriormente y nos permite simplificar la sintaxis de concatenar algo a una misma cadena, ejemplo:
+
+```
+$var1 = ‘Hola ’ . ‘ php’;
+$var1 .= ‘!!!’;
+echo $var1;
+```
+imprime
+```
+Hola php!!!
+```
+
+**Operadores para arrays**
+
+http://php.net/manual/es/language.operators.array.php
+
+![assets/25.png](assets/25.png)
