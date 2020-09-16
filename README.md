@@ -21,7 +21,7 @@ Curso de php realizado en Platzi
 
 [Clase 10 Ejercicios Arreglos](#Clase-10-Ejercicios-Arreglos)
 
-[]()
+[Clase 11 While vs. Do While](#Clase-11-While-vs-Do-While)
 
 []()
 
@@ -643,3 +643,240 @@ Escribe el código necesario para encontrar los 3 números más grandes y los 3 
 ```
 $valores = [23, 54, 32, 67, 34, 78, 98, 56, 21, 34, 57, 92, 12, 5, 61]
 ```
+
+## Clase 11 While vs. Do While
+
+**ciclos**
+
+Como mencionamos en nuestra clase anterior, los ciclos o bucles son de total importancia cuando desarrollamos software pues nos permiten repetir un bloque de acciones y en consecuencia re-utilizar mejor nuestro código, en este momento ya hablamos de cómo funciona el ciclo for y el ciclo do-while.
+
+Ahora vamos a revisar un par de ciclos adicionales en PHP los cuales también es importante conocer. Toma en cuenta que la mayoría de las cosas se pueden hacer de diferentes maneras por lo tanto es importante que elijas bien cual es el ciclo que mejor se adapta a tu problema.
+
+**while vs. do… while**
+
+En la clase anterior hablamos del ciclo do while, aquí lo compararemos con otro ciclo llamado while, recapitulemos el funcionamiento de do… while:
+
+Cuando creamos un ciclo do… while, le decimos a PHP que ejecute cierto bloque de código siempre y cuando la condición que tengas dentro se siga evaluando como verdadera.
+
+Esta es la sintaxis de un ciclo do… while
+
+```
+do {
+   codigo…
+} while (condicion)
+```
+
+El ciclo while funciona de la misma manera, pero la diferencia principal es que la evaluación se llevará a cabo al iniciar el ciclo:
+
+```
+while (condicion) {
+   codigo...
+}
+```
+
+La principal diferencia es que el ciclo do while garantiza que el código interno se ejecutará al menos 1 vez, mientras que en el ciclo while si la condición es falsa desde un inicio, es posible que el ciclo nunca se ejecute
+
+http://php.net/manual/es/control-structures.while.php
+http://php.net/manual/es/control-structures.do.while.php
+
+**foreach**
+
+El ciclo foreach nos brinda una solución simple para iterar sobre los valores de un arreglo, la sintaxis es la siguiente:
+
+```
+foreach ($array as $valor) {
+    sentencias que pueden usar $valor
+}
+```
+
+En esta sintaxis nos encontramos con 4 partes:
+
+- La palabra reservada foreach simplemente indica el inicio de nuestro bloque
+
+- Dentro de paréntesis se escribe el nombre del arreglo que vamos a estar iterando, este arreglo debe estar definido previamente, en este ejemplo es $arreglo
+
+- La palabra “as” seguido de un nombre de variable que usaremos para acceder al elemento del arreglo que estamos accediendo, esta variable no debe existir previamente y solo la podrán usar dentro de este bloque. En el ejemplo es $valor.
+
+- Entre llaves “{ }” todas las acciones que queremos repetir, en el momento en que se ejecute el ciclo la variable que definimos para iterar (en el ejemplo $valor) ya existe y podrá ser usada en esta sección, piensa que el valor de esta variable estará cambiando en cada iteración.
+
+Suponiendo que en el ejemplo anterior $array = [‘uno’, ‘dos’, ‘tres’], el ciclo se repetirá 3 veces y en cada iteración la variable $valor contendrá el elemento del arreglo correspondiente, es decir, en la primera iteración $valor será igual a ‘uno’, en la segunda $valor será igual a ‘dos’ y en la tercera $valor será igual a ‘tres’.
+
+Existe una sintaxis alternativa que nos permite no solo conocer el valor, también nos permitirá conocer la llave, de este modo tendremos acceso tanto a la llave como al valor del elemento del arreglo:
+
+```
+foreach ($array as $llave => $valor) {
+    sentencias que pueden usar $llave y $valor
+}
+```
+http://php.net/manual/es/control-structures.foreach.php
+
+## Clase 12 Operadores, Condicionales, Continue y Break
+
+En PHP existen cuatro tipos principales de operadores:
+
+- Aritméticos.( +, -, /, *)
+
+- Asignación. (=)
+
+- Condicionales.(if, else, elseif)
+
+- Comparación (> mayor que, < menor que , == igual a , != diferente de)
+
+- Incremento (i++ o  i = i + 1).
+
+Aprovechemos para practicar y veamos más sobre condiciones, en PHP tenemos el operador de comparación (==) y diferente de (!=).
+
+Tenemos la sentencia **continue** la cuál al ejecutarse hará que se itere a la siguiente línea del arreglo. Y la sentencia **break** que hará que el ciclo se termine.
+
+En el archivo **index.php** en el array jobs agregar el siguiente codigo donde `'visible'` utiliza tipos de dato Booleano, falso o verdadero
+
+```
+<?php
+$name = "Jeyfred Calderon";
+$jobs = [
+  ['title' => 'PHP Developer',
+    'description' => 'Este es un trabajo asombroso',
+    'visible' => true],
+  ['title' => 'Python Dev',
+  'visible' => false],
+  ['title' => 'Devops',
+  'visible' => false],
+  ['title' => 'Node Dev',
+  'visible' => true],
+  ['title' => 'Frontend Dev',
+  'visible' => true]  
+];
+/* $var1 = 2;
+if($var1> 2){
+  echo 'Es mayor que 2';
+}
+elseif($var1 == 2){
+  echo 'Es igual que 2';
+}
+else{
+  echo 'Es menor que 2';
+} */
+
+?>
+```
+
+ahora donde se estaba haciendo el for para los work-position, donde si `'visible'` es `True` o verdadero se va a mostrar eso en Work Experiencie al volver a cargar la pagina
+
+```
+            <?php
+
+            for($idx=0; $idx < count($jobs); $idx++){ 
+              if($jobs[$idx]['visible'] == true){
+                echo '<li class="work-position">';
+                echo '<h5>' . $jobs[$idx]['title'] . '</h5>';  
+                echo '<p>' . $jobs[$idx]['description'] . '</p>'; 
+                echo '<strong>Achievements:</strong>';
+                echo '<ul>';
+                echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+                echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+                echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+                echo '</ul>';
+                echo '</li>';
+              }
+            }
+            ?>
+```
+
+Modificando el codigo anterior, a este se le va a agregar **continue** y visible va a pasar ahora a ser `false`, lo que significa es que si la visibilidad del trabajo es falsa continue y ejecute la siguiente instruccion
+
+```
+            <?php
+
+            for($idx=0; $idx < count($jobs); $idx++){ 
+              if($jobs[$idx]['visible'] == false){
+                continue;
+              }
+              echo '<li class="work-position">';
+              echo '<h5>' . $jobs[$idx]['title'] . '</h5>';  
+              echo '<p>' . $jobs[$idx]['description'] . '</p>'; 
+              echo '<strong>Achievements:</strong>';
+              echo '<ul>';
+              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+              echo '</ul>';
+              echo '</li>';
+            }
+            ?>
+```
+
+al recargar la pagina no existira una diferencia con respecto a la primera isntruccion del for
+
+ahora a el array jobs se le van agregar los meses de experiencia en cada trabajo, el array queda de la siguiente forma
+
+```
+<?php
+$name = "Jeyfred Calderon";
+$limitMonths = 12;
+$jobs = [
+  ['title' => 'PHP Developer',
+    'description' => 'Este es un trabajo asombroso',
+    'visible' => true,
+    'months' => 6],
+  ['title' => 'Python Dev',
+  'visible' => false,
+  'months' => 4],
+  ['title' => 'Devops',
+  'visible' => false,
+  'months' => 5],
+  ['title' => 'Node Dev',
+  'visible' => true,
+  'months' => 2],
+  ['title' => 'Frontend Dev',
+  'visible' => true,
+    'months' => 3]  
+];
+
+/* $var1 = 2;
+if($var1> 2){
+  echo 'Es mayor que 2';
+}
+elseif($var1 == 2){
+  echo 'Es igual que 2';
+}
+else{
+  echo 'Es menor que 2';
+} */
+
+?>
+```
+
+y ahora en el for se va agregar otra condicion donde se le va indicar que solo aparezcan trabajos donde haya trabajado en los ultimos 12 meses, para eso antes del array jobs se crea una variable llamda `$limitMonths = 12;`, y ahora antes del for, se crea la variable `$totalMonths = 0;`, la cual va a funcionar como un contador y este se tiene que inicializar en 0, posteriormente entre el for y el if se agrega la siguiente instruccion `$totalMonths = $totalMonths + $jobs[$idx]['months']`, lo que esta haciendo esta es que `$idx` hace la iteracion sobre los meses y la variable `$totalMonths` va sumando los meses, como lo que se quiere es imprimir trabajos no superiores a 12 meses se agrega otro if statements `if($totalMonths > $limitMonths){break;}` el cual indica que si el total de meses llega a ser superior a 12 deje de ejecutar el codigo y continue hacia el siguiente if statements
+
+```
+            <?php
+            
+            $totalMonths = 0;
+            for($idx=0; $idx < count($jobs); $idx++){ 
+              $totalMonths += $jobs[$idx]['months'];
+
+              if($totalMonths > $limitMonths){
+              break;
+              }
+
+              if($jobs[$idx]['visible'] != true){
+                continue;
+              }
+              echo '<li class="work-position">';
+              echo '<h5>' . $jobs[$idx]['title'] . '</h5>';  
+              echo '<p>' . $jobs[$idx]['description'] . '</p>';
+              echo '<p>' . $totalMonths . '</p>'; 
+              echo '<strong>Achievements:</strong>';
+              echo '<ul>';
+              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+              echo '</ul>';
+              echo '</li>';
+            }
+          ?>
+```
+
+al recargar la pagina debe salir el primer trabajo el cual duro 6 meses + el segundo que fueron 4 meses, el tercero suma a 15 por tanto se detiene en 10 meses y no imprime mas trabajos
+
+![assets/20.png](assets/20.png)
