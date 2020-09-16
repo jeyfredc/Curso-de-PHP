@@ -76,4 +76,79 @@ $valores = [23, 54, 32, 67, 34, 78, 98, 56, 21, 34, 57, 92, 12, 5, 61];
     }
     ?>
 </body>
+
+    <h2>Ejercicio 1 de la Clase 14</h2>
+    <p>Calcula el resultado de 32+3 y 3(2+3). Escribe el procedimiento que empleaste</p>
+    <?php
+
+    $int1 =32;
+    $int2 = 3;
+    $suma = $int1 + $int2;
+
+    echo '<p> Se establece la primer variable como un entero asignado al valor de 32  asi $int1 =32; y la segunda variable con asignacion de 5 $int2 = 5; , luego se crea otra variable llamada suma donde se almacena el resultado y se imprime en la pagina. $suma = $int1 + $int2;  echo "El resultado de la suma es $suma";</p>';
+    
+    echo "El resultado de la suma es $suma";
+    ?>
+
+    <h2>Ejercicio 2 de la Clase 14</h2>
+
+    <p>Tomando en cuenta que tenemos una variable llamada $valor, escribe en la sección de discusiones ¿Cómo sería un condicional para las siguientes opciones?</p>
+
+    <ul>
+        <li>$valor es mayor que 5 pero menor que 10</li>
+        <li>$valor es mayor o igual a 0 pero menor o igual a 20</li>
+        <li>$valor es igual a “10” asegurando que el tipo de dato sea cadena</li>
+        <li>$valor es mayor a 0 pero menor a 5 o es mayor a 10 pero menor a 15</li>
+    </ul>
+
+    <?php
+
+    $valor = 14;
+
+
+    if($valor> 5 &&  $valor < 10){
+        echo "$valor es mayor que 5 pero menor que 10";
+    }
+    elseif($valor >= 0 && $valor<=20){
+        echo "$valor es mayor o igual a 0 pero menor o igual a 20";
+    }
+
+    echo '</br>'. '</br>';
+
+    if($valor === "10"){
+        echo "$valor es igual a 10 asegurando que el tipo de dato sea cadena";
+    }elseif ($valor > 0 && $valor < 5 or $valor > 10 && $valor< 15) {
+        echo "$valor es mayor a 0 pero menor a 5 o es mayor a 10 pero menor a 15";
+    }
+    ?>
+
+    <p> A continuacion la logica del ejercicio 2</p>
+    <code>
+    <br>  
+    if($valor> 5 &&  $valor < 10){
+        <br>
+        echo "$valor es mayor que 5 pero menor que 10";
+        <br>
+    }
+    <br>
+    elseif($valor >= 0 && $valor<=20){
+        <br>
+        echo "$valor es mayor o igual a 0 pero menor o igual a 20";
+        <br>
+    }elseif($valor == 10){
+        <br>
+        echo "$valor es igual a 10 asegurando que el tipo de dato sea cadena";
+        <br>
+    }elseif ($valor > 0 && $valor < 5 or $valor > 10 && $valor< 15) {
+        <br>
+        echo "$valor es mayor a 0 pero menor a 5 o es mayor a 10 pero menor a 15";
+        <br>
+    } 
+    </code>
+
+    <p>Si establezco que la variable $valor = 6; se cumple la primer condicion</p>
+    <p>Si establezco que la variable $valor = 11; se cumple la segunda condicion</p>
+    <p>Si establezco que la variable $valor = "10"; se cumple la tercer condicion</p>
+    <p>Si establezco que la variable $valor = 4; o $valor = 14; se cumple la seunda y cuarta condicion</p>
+    
 </html>

@@ -27,6 +27,33 @@ Curso de php realizado en Platzi
 
 [Clase 13 Operadores](#Clase-13-Operadores)
 
+[Clase 14 Ejercicios Operadores](#Clase-14-Ejercicios-Operadores)
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
 
 
 ## Clase 1 Presentación del curso
@@ -1000,3 +1027,21 @@ Hola php!!!
 http://php.net/manual/es/language.operators.array.php
 
 ![assets/25.png](assets/25.png)
+
+## Clase 14 Ejercicios Operadores
+
+**Ejercicio 1.**
+
+Calcula el resultado de 32+3 y 3(2+3). Escribe el procedimiento que empleaste en la sección de discusiones.
+
+**Ejercicio 2.**
+
+Tomando en cuenta que tenemos una variable llamada $valor, escribe en la sección de discusiones ¿Cómo sería un condicional para las siguientes opciones?
+
+- $valor es mayor que 5 pero menor que 10
+
+- $valor es mayor o igual a 0 pero menor o igual a 20
+
+- $valor es igual a “10” asegurando que el tipo de dato sea cadena
+
+- $valor es mayor a 0 pero menor a 5 o es mayor a 10 pero menor a 15
