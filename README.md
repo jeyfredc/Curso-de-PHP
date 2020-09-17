@@ -31,9 +31,9 @@ Curso de php realizado en Platzi
 
 [Clase 15 Funciones](#Clase-15-Funciones)
 
-[]()
+[Clase 16 Agregando archivos externos](#Clase-16-Agregando-archivos-externos)
 
-[]()
+[Clase 17 Programación Orientada a Objetos](#Clase-17-Programación-Orientada-a-Objetos)
 
 []()
 
@@ -1421,3 +1421,254 @@ si se llegase a duplicar el require en **index.php**, lo que va a pasar internam
 las funciones creadas antes tambien se pueden pasar a **jobs.php** para dejar el archivo index un poco mas limpio.
 
 Existe tambien otro llamado que es `require_once` y `include_once`, lo que hacen es que si por ejemplo se esta llamando el archivo 2 veces el navegador solo lo va a pasar una vez y esto permite que no tengamos errores al hacer el llamado de un archivoy no volverlo a repetir
+
+## Clase 17 Programación Orientada a Objetos
+
+La programación orientada a objetos nos ayudará a estructurar mejor nuestros programas. PHP a partir de su versión 5 tiene implementaciones orientadas a objetos, lo que lo hace tener código más reutilizable y mantenible.
+
+Una clase es una plantilla o definición de algo. Y una instancia es la representación concreta de la clase.
+
+Encapsulamiento será el nivel de visibilidad que queramos darle a alguna variable, para ello podemos utilizar los modificadores de acceso private, public y protected.
+
+Con la palabra reservada this estaremos haciendo referencia a la variable que pertenece a la clase.
+
+En esta clase se va a instanciar un objeto de la clase Job. 
+
+La clase Job tiene declaradas unas variables de forma publica, estas variables son las que se habian venido trabajando en el array
+
+```
+class Job{
+    public $title;
+    public $description;
+    public $visible;
+    public $months;
+}
+```
+
+para poder instanciar un nuevo objeto de job se declara de esta forma
+
+```
+$job1 = new Job();
+```
+
+si se requiere crear mas objetos, se creara 
+
+```
+$job1 = new Job();
+$job2 = new Job();
+.
+.
+.
+$jobn = new Job();
+```
+
+y en el array se va a comentar todo los valores que se habian establecido y solo se va a pasar la primer instancia del objeto Job
+
+```
+$jobs = [
+    $job1
+//     ['title' => 'PHP Developer',
+//       'description' => 'Este es un trabajo asombroso',
+//       'visible' => true,
+//       'months' => 16],
+//     ['title' => 'Python Dev',
+//     'visible' => false,
+//     'months' => 4],
+//     ['title' => 'Devops',
+//     'visible' => true,
+//     'months' => 6],
+//     ['title' => 'Node Dev',
+//     'visible' => true,
+//     'months' => 2],
+//     ['title' => 'Frontend Dev',
+//     'visible' => true,
+//     'months' => 13]  
+   ];
+```
+
+Mientras las variables de la clase Job sean publicas se pueden crear propiedades de las variables de la siguiente forma
+
+```
+$job1 = new Job();
+$job1->title = 'PHP Developer';
+$job1->description = 'Este es un trabajo asombroso';
+$job1->visible = true;
+$job1->months = 16;
+```
+
+y asi mismo se debe establecer donde se llamen estas variables de la clase Job
+
+```
+
+  function getDuration($months){
+    $years = floor($months / 12);
+    $extraMonths = $months % 12;
+  
+    if($years == 0){
+      return "$extraMonths months";
+    }else{
+      return "$years years $extraMonths months";
+    }
+    
+  }
+  
+  function printJob($job) {
+  
+    if($job->visible == false){
+      return;
+    }
+  
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->title . '</h5>';  
+    echo '<p>' . $job->description . '</p>';
+    echo '<p>' . getDuration($job->months) . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+```
+
+Pero la POO permite encapsular las variables y en vez de tenerlas publicas volverlas privadas con la palabra `private`
+
+```
+class Job{
+    private $title;
+    public $description;
+    public $visible;
+    public $months;
+}
+```
+
+de esta forma ya no se tiene acceso al titulo si no se establece un metodo.
+
+Para poder acceder a la variable se crea un metodo publico dentro de la clase Job
+
+Se crea el metodo getTitle y mediante el retur agregando la palabra `$this`, lo que esta indicando es que acceda a la variable de la clase Job que es de tipo privado
+
+```
+class Job{
+    private $title;
+    public $description;
+    public $visible;
+    public $months;
+
+    public function getTitle(){
+        return $this->title;
+    }
+}
+```
+
+Ahora se va a crear otra instancia de la Clase Job con $job2 y ahora tenemos 2 objetos creados
+
+```
+$job1 = new Job();
+$job1->title = 'PHP Developer';
+$job1->description = 'Este es un trabajo asombroso';
+$job1->visible = true;
+$job1->months = 16;
+
+$job2 = new Job();
+$job2->title = 'Python Dev';
+$job2->description = 'Este es un trabajo asombroso';
+$job2->visible = true;
+$job2->months = 16;
+```
+
+Ahora la nueva instancia tambien se puede agregar al array de `$jobs`
+
+```
+$jobs = [
+    $job1,
+    $job2
+//     ['title' => 'PHP Developer',
+//       'description' => 'Este es un trabajo asombroso',
+//       'visible' => true,
+//       'months' => 16],
+//     ['title' => 'Python Dev',
+//     'visible' => false,
+//     'months' => 4],
+//     ['title' => 'Devops',
+//     'visible' => true,
+//     'months' => 6],
+//     ['title' => 'Node Dev',
+//     'visible' => true,
+//     'months' => 2],
+//     ['title' => 'Frontend Dev',
+//     'visible' => true,
+//     'months' => 13]  
+   ];
+```
+
+pero ahora se quiere poder modificar el valor del titulo, para eso se establece otro mentodo en la clase Job llamado setTitle el cual pasa el parametro del titulo, en ese caso `$title` se puede llamar de otra forma
+
+```
+class Job{
+    private $title;
+    public $description;
+    public $visible;
+    public $months;
+
+    public function setTitle($title){
+        this->title = $title;
+    }
+
+    public function getTitle(){
+        return $this->title;
+    }
+}
+```
+
+Al realizar este cambio los objetos en la parte del title cambian y se cambian por los metodos establecidos asi
+
+```
+$job1 = new Job();
+$job1->setTitle('PHP Developer');
+$job1->description = 'Este es un trabajo asombroso';
+$job1->visible = true;
+$job1->months = 16;
+
+$job2 = new Job();
+$job2->setTitle('Python Dev');
+$job2->description = 'Este es un trabajo asombroso';
+$job2->visible = true;
+$job2->months = 24;
+```
+
+y en la funcion printJob se debe cambiar la forma de obtener el title mediante `getTitle()`, porque la variable ahora es privada
+
+```
+  function getDuration($months){
+    $years = floor($months / 12);
+    $extraMonths = $months % 12;
+  
+    if($years == 0){
+      return "$extraMonths months";
+    }else{
+      return "$years years $extraMonths months";
+    }
+    
+  }
+  
+  function printJob($job) {
+  
+    if($job->visible == false){
+      return;
+    }
+  
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->getTitle() . '</h5>';  
+    echo '<p>' . $job->description . '</p>';
+    echo '<p>' . getDuration($job->months) . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+```
