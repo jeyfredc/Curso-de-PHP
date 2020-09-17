@@ -29,7 +29,7 @@ Curso de php realizado en Platzi
 
 [Clase 14 Ejercicios Operadores](#Clase-14-Ejercicios-Operadores)
 
-[]()
+[Clase 15 Funciones](#Clase-15-Funciones)
 
 []()
 
@@ -1045,3 +1045,379 @@ Tomando en cuenta que tenemos una variable llamada $valor, escribe en la secció
 - $valor es igual a “10” asegurando que el tipo de dato sea cadena
 
 - $valor es mayor a 0 pero menor a 5 o es mayor a 10 pero menor a 15
+
+## Clase 15 Funciones
+
+Las funciones en PHP se denotan por la palabra reservada function seguida por el nombre de la función, las funciones nos servirán para llamar y reutilizar código en nuestros proyectos.
+
+Cuando trabajemos con funciones es muy importante cuidar el scope (alcance) de las variables pues, algunas podrían entrar en su scope y otras no.
+
+Las funciones en PHP pueden o no regresar un dato particular. Si deseamos hacerlo podemos indicarlo con la palabra reservada return.
+
+RETO: Utiliza condicionales para validar los años que tengan valor cero.
+
+Las funciones son estructuras que permiten encapsular o reunir cierta funcionalidad para poderla re utilizar, en el archivo **index.php**, se va a declarar debajo del array jobs una funcion llamada `printJob` la cual va de esta forma inicialmente dentro de los parentesis () pueden ir o no parametros y despues  van las llaves en las cuales esta todo el contenido de la funcion
+
+```
+function printJob() {
+  // Contenido de la funcion
+}
+```
+
+al declarar esta funcion lo unico que se esta haciendo es declarar que se puede utilizar pero de momento no va a aparecer al recargar la pagina porque solo esta declarada y no se ha mandado a llamar
+
+```
+function printJob() {
+  echo 'jobs';
+}
+```
+
+para que se pueda utilizar se debe ejecutar la sentencia a continuacion
+
+```
+printJob();
+```
+en este caso ya se esta mandando a llamar
+
+![assets/26.png](assets/26.png)
+
+y ahora va aparecer cuando se recargue el navegador
+
+![assets/27.png](assets/27.png)
+
+y el codigo,se puede re utilizar cuantas veces se requiera
+
+Ahora lo que se va a hacer es agregar un parametro a la funcion `printJob` que se llama `$job` y cambiar el codigo interno de la funcion
+
+```
+function printJob($job){
+
+}
+```
+
+y ahora se agrega todo el codigo que anteriormente se estaba usando para imprimir sin el for, ni el if 
+
+```
+function printJob($job){
+  echo '<li class="work-position">';
+  echo '<h5>' . $jobs[$idx]['title'] . '</h5>';  
+  echo '<p>' . $jobs[$idx]['description'] . '</p>';
+  echo '<p>' . $totalMonths . '</p>'; 
+  echo '<strong>Achievements:</strong>';
+  echo '<ul>';
+  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+  echo '</ul>';
+  echo '</li>';
+}
+```
+y el codigo que se quito del for y el if se va a reemplazar por la funcion pasandole como parametro la variable con el iterador
+
+```
+            <?php
+            
+            $totalMonths = 0;
+            for($idx=0; $idx < count($jobs); $idx++){ 
+              $totalMonths += $jobs[$idx]['months'];
+
+              if($totalMonths > $limitMonths){
+              break;
+              }
+
+              if($jobs[$idx]['visible'] != true){
+                continue;
+              }
+              printJob($jobs[$idx]);
+            }
+          ?>
+```
+
+pero si se pasa la variable `$jobs` en la funcion, va a marcar un error porque aun no existe dentro de la funcion y a esto se le conoce como scope o alcance. y la funcion creada inicialmente tiene un scope interno, por tanto en la funcion se debe cambiar `jobs[$idx]` por `job`, porque es lo que esta recibiendo la funcion, ademas tambien se cancela o se comentarea `$totalMonths` porque desde la funcion ya no se tiene acceso a la variable 
+
+```
+function printJob($job) {
+  echo '<li class="work-position">';
+  echo '<h5>' . $job['title'] . '</h5>';  
+  echo '<p>' . $job['description'] . '</p>';
+  //echo '<p>' . $totalMonths . '</p>'; 
+  echo '<strong>Achievements:</strong>';
+  echo '<ul>';
+  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+  echo '</ul>';
+  echo '</li>';
+}
+```
+al recargar la pagina ya se pueden ver los trabajos nuevamente ademas si la variable `$limitMonths` pasa de 12a a 24 meses .
+
+Ahora antes de la funcion `printJob` se va a generar otra funcion para generar cual es la duracion que tenemos o tuvimos en cada trabajo, esta funcion se va a llamar `function getDuration()`, en esta se va a generar una cadena, que va a tener cuantos años y meses son los de cada trabajo, que se establecieron en un principio en el array y tambien se va a añadir una modificacion a la funcion `printJob` que va a llamar la funcion que acabamos de crear, el codigo queda asi
+
+```
+<?php
+$name = "Jeyfred Calderon";
+$limitMonths = 24;
+$jobs = [
+  ['title' => 'PHP Developer',
+    'description' => 'Este es un trabajo asombroso',
+    'visible' => true,
+    'months' => 6],
+  ['title' => 'Python Dev',
+  'visible' => true,
+  'months' => 4],
+  ['title' => 'Devops',
+  'visible' => true,
+  'months' => 5],
+  ['title' => 'Node Dev',
+  'visible' => true,
+  'months' => 2],
+  ['title' => 'Frontend Dev',
+  'visible' => true,
+    'months' => 3]  
+];
+
+function getDuration($months){
+  return "$months months";
+}
+
+function printJob($job) {
+  echo '<li class="work-position">';
+  echo '<h5>' . $job['title'] . '</h5>';  
+  echo '<p>' . $job['description'] . '</p>';
+  echo '<p>' . getDuration($job['months']) . '<p>';
+  echo '<strong>Achievements:</strong>';
+  echo '<ul>';
+  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+  echo '</ul>';
+  echo '</li>';
+}
+
+```
+
+y al recargar la pagina, ya va a aparecer la informacion de cada trabajo, con el numero de meses 
+
+![assets/28.png](assets/28.png)
+
+## Clase 16 Agregando archivos externos
+
+Organizaremos mejor nuestro código para ello lo separaremos en otro archivo llamado jobs.php.
+
+Usaremos la palabra reservada include para hacer que el archivo index incluya el archivo jobs.php, si lo encuentra lo incluye, pero si no nos mostrará un warning. Existe otro llamado require que si no lo encuentra nos muestra un error en todo el archivo.
+
+Los métodos include y require ejecutan el código del archivo cada vez que lo incluyen, esto puede traer errores en la ejecución de tu código si tienes archivos con funciones pues te dirá que no puedes declarar dos veces una función con el mismo nombre. Para resolver esto existen include_once y require_once que obligan a incluir una sola vez el archivo.
+
+A medida que la aplicacion empieza a crecer se vuelve mas compleja de controlar y por tanto es mejor dividir la aplicacion en diferentes archivos e ir dividiendo las funcionalidades o ir creando pequeños modulos de informacion para que se puedan utilizar,
+
+para realizar esto toda la parte del array de jobs se va a sacar a otra archivo que se llame **jobs.php** el cual va a ser creado dentro de la carpeta **curso_php** .
+
+**Nota** cuando el archivo es netamente de php no es necesario dar una etiqueta de cierre `?>`
+
+ahora el archivo de **jobs.php** queda con todo el array y para poder llamarlo desde **index.php** se debe llamar en el principio con `include` el cual recibe como parametro el nombre del nuevo archivo, asi es como va quedando el archivo
+
+```
+<?php
+
+include('jobs.php');
+
+$name = "Jeyfred Calderon";
+$limitMonths = 2000;
+
+function getDuration($months){
+  $years = floor($months / 12);
+  $extraMonths = $months % 12;
+
+  if($years == 0){
+    return "$extraMonths months";
+  }else{
+    return "$years years $extraMonths months";
+  }
+  
+}
+
+function printJob($job) {
+
+  if($job['visible'] == false){
+    return;
+  }
+
+  echo '<li class="work-position">';
+  echo '<h5>' . $job['title'] . '</h5>';  
+  echo '<p>' . $job['description'] . '</p>';
+  echo '<p>' . getDuration($job['months']) . '<p>';
+  echo '<strong>Achievements:</strong>';
+  echo '<ul>';
+  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+  echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+  echo '</ul>';
+  echo '</li>';
+}
+
+?>
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+
+  <title>Resume</title>
+</head>
+
+<body>
+  <div class="container">
+    <div id="resume-header" class="row">
+      <div class="col-3">
+        <img id="profile-picture" src="https://ui-avatars.com/api/?name=John+Doe&size=255" alt="">
+      </div>
+      <div class="col">
+        <h1><?php echo $name; ?></h1>
+        <h2>PHP Developer</h2>
+        <ul>
+          <li>Mail: hector@mail.com</li>
+          <li>Phone: 1234567890</li>
+          <li>LinkedIn: https://linkedin.com</li>
+          <li>Twitter: @hectorbenitez</li>
+        </ul>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <h2 class="border-bottom-gray" >Carrer Summary</h2>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div>
+          <h3 class="border-bottom-gray" >Work Experience</h3>
+          <ul>
+            <?php
+            
+            $totalMonths = 0;
+            for($idx=0; $idx < count($jobs); $idx++){ 
+              $totalMonths += $jobs[$idx]['months'];
+
+              if($totalMonths > $limitMonths){
+              break;
+              }
+              printJob($jobs[$idx]);
+            }
+          ?>
+          </ul>
+        </div>
+        <div>
+            <h3 class="border-bottom-gray">Projects</h3>
+            <div class="project">
+                <h5>Project X</h5>
+                <div class="row">
+                    <div class="col-3">
+                        <img id="profile-picture" src="https://ui-avatars.com/api/?name=John+Doe&size=255" alt="">
+                      </div>
+                      <div class="col">
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius earum corporis at accusamus quisquam hic quos vel? Tenetur, ullam veniam consequatur esse quod cum, quam cupiditate assumenda natus maiores aperiam.</p>
+                        <strong>Technologies used:</strong>
+                        <span class="badge badge-secondary">PHP</span>
+                        <span class="badge badge-secondary">HTML</span>
+                        <span class="badge badge-secondary">CSS</span>
+                      </div>
+                </div>
+            </div>
+            <div class="project">
+                <h5>Project X</h5>
+                <div class="row">
+                    <div class="col-3">
+                        <img id="profile-picture" src="https://ui-avatars.com/api/?name=John+Doe&size=255" alt="">
+                      </div>
+                      <div class="col">
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius earum corporis at accusamus quisquam hic quos vel? Tenetur, ullam veniam consequatur esse quod cum, quam cupiditate assumenda natus maiores aperiam.</p>
+                        <strong>Technologies used:</strong>
+                        <span class="badge badge-secondary">PHP</span>
+                        <span class="badge badge-secondary">HTML</span>
+                        <span class="badge badge-secondary">CSS</span>
+                      </div>
+                </div>
+            </div>
+          </div>
+      </div>
+      <div class="col-3">
+        <h3 class="border-bottom-gray" >Skills & Tools</h3>
+        <h4>Backend</h4>
+        <ul>
+          <li>PHP</li>
+        </ul>
+        <h4>Frontend</h4>
+        <ul>
+            <li>HTML</li>
+            <li>CSS</li>
+        </ul>
+        <h4>Frameworks</h4>
+        <ul>
+          <li>Laravel</li>
+          <li>Bootstrap</li>
+        </ul>
+        <h3 class="border-bottom-gray" >Languages</h3>
+        <ul>
+          <li>Spanish</li>
+          <li>English</li>
+        </ul>
+      </div>
+    </div>
+    <div id="resume-footer" class="row">
+      <div class="col">
+          Designed by @hectorbenitez
+      </div>
+    </div>
+  </div>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
+```
+
+al recargar la pagina va aparecer la pagina sin ninguna complicacion
+
+![assets/29.png](assets/29.png)
+
+pero si se llega a cargar mal en el include, la pagina va a aparecer con varios mensajes de error, como por ejemplo colocar
+
+`include('jobs1.php');`
+
+![assets/30.png](assets/30.png)
+
+y si se cambia por la palabra require
+
+`require('jobs1.php');`
+
+va a aparecer un error fatal en toda la pagina
+
+![assets/31.png](assets/31.png)
+
+si se llegase a duplicar el require en **index.php**, lo que va a pasar internamente es que lo que esta en **jobs.php**, se va a cargar 2 veces en el navegador, el ejemplo se puede ver si en **jobs.php** se coloca un `echo 'Llamando a jobs.php'`.
+
+![assets/32.png](assets/32.png)
+
+las funciones creadas antes tambien se pueden pasar a **jobs.php** para dejar el archivo index un poco mas limpio.
+
+Existe tambien otro llamado que es `require_once` y `include_once`, lo que hacen es que si por ejemplo se esta llamando el archivo 2 veces el navegador solo lo va a pasar una vez y esto permite que no tengamos errores al hacer el llamado de un archivoy no volverlo a repetir

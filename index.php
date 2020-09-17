@@ -1,35 +1,9 @@
 <?php
-$name = "Jeyfred Calderon";
-$limitMonths = 12;
-$jobs = [
-  ['title' => 'PHP Developer',
-    'description' => 'Este es un trabajo asombroso',
-    'visible' => true,
-    'months' => 6],
-  ['title' => 'Python Dev',
-  'visible' => true,
-  'months' => 4],
-  ['title' => 'Devops',
-  'visible' => true,
-  'months' => 5],
-  ['title' => 'Node Dev',
-  'visible' => true,
-  'months' => 2],
-  ['title' => 'Frontend Dev',
-  'visible' => true,
-    'months' => 3]  
-];
 
-/* $var1 = 2;
-if($var1> 2){
-  echo 'Es mayor que 2';
-}
-elseif($var1 == 2){
-  echo 'Es igual que 2';
-}
-else{
-  echo 'Es menor que 2';
-} */
+require('jobs.php');
+
+$name = "Jeyfred Calderon";
+$limitMonths = 2000;
 
 ?>
 
@@ -89,21 +63,7 @@ else{
               if($totalMonths > $limitMonths){
               break;
               }
-
-              if($jobs[$idx]['visible'] != true){
-                continue;
-              }
-              echo '<li class="work-position">';
-              echo '<h5>' . $jobs[$idx]['title'] . '</h5>';  
-              echo '<p>' . $jobs[$idx]['description'] . '</p>';
-              echo '<p>' . $totalMonths . '</p>'; 
-              echo '<strong>Achievements:</strong>';
-              echo '<ul>';
-              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-              echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
-              echo '</ul>';
-              echo '</li>';
+              printJob($jobs[$idx]);
             }
           ?>
           </ul>
