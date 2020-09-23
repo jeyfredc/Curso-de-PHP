@@ -39,7 +39,7 @@ Curso de php realizado en Platzi
 
 [Clase 19 Herencia](#Clase-19-Herencia)
 
-[]()
+[Clase 20 Herencia y polimorfismo](#Clase-20-Herencia-y-polimorfismo)
 
 []()
 
@@ -2378,3 +2378,15 @@ Pero si queremos que siga siendo privada y que las clases hijas tengan acceso po
 Al recargar el navegador vuelve a aparecer el titulo y la descripcion
 
 ![assets/40.png](assets/40.png)
+
+## Clase 20 Herencia y polimorfismo
+
+Cuando trabajamos con objetos y clases, algunas veces podemos encontrarnos con clases que son muy similares, incluso que comparten algunos métodos o propiedades, pero que no son completamente iguales.
+
+En este punto hablaremos de la Herencia, un concepto que nos permitirá reutilizar todo las partes que son comunes y nos permitirá tener lo que no es común en clases separadas.
+
+La Herencia funciona como una cadena de herencia, es decir podemos tener una clase y generar una “clase hija” a partir de ella, la clase “hija” reutilizara todas las propiedades y métodos de la clase “padre” y además le permitirá implementar esas partes que la hacen diferente.
+
+Por ejemplo, pensemos que estamos construyendo un sistema de comercio electrónico que maneja libros digitales y álbumes musicales, para esto podríamos generar una cadena de herencia como la siguiente:
+
+![assets/43.png](assets/43.png)
