@@ -41,9 +41,9 @@ Curso de php realizado en Platzi
 
 [Clase 20 Herencia y polimorfismo](#Clase-20-Herencia-y-polimorfismo)
 
-[]()
+[Clase 21 Interfaces](#Clase-21-Interfaces)
 
-[]()
+[Clase 22 Namespaces](#Clase-22-Namespaces)
 
 []()
 
@@ -2620,3 +2620,128 @@ De esta forma en el navegador todo aparecera correctamente
 
 El proposito de la interfaz es que esta sea publica por eso va estar siempre como `public function`.
 
+## Clase 22 Namespaces
+
+Los **namespaces** o espacios de nombres son una caracteristica que se usa en PHP para solucionar un problema que se llama coalision de nombres.
+
+Esta es una forma de mantener únicos los nombres de los archivos en el mismo directorio.
+
+Esto nos permite tener mejor organizado el proyecto.
+
+dentro de la carpeta **curso_php** crear una nueva subcarpeta llamada **lib1** y dentro de esta crear un archivo que se llame **Project.php**, asi como se creto en la carpeta **Models**, este nuevo archivo contiene el siguiente codigo
+
+```
+<?php
+
+class Project{
+    
+}
+```
+Y ahora en el archivo **jobs.php** se importa a **Project.php** de la carpeta **lib1**
+
+```
+require_once 'lib1/Project.php';
+```
+
+![assets/46.png](assets/46.png)
+
+Al recargar el navegador va a salir un error que indica que no se puede re declarar la clase Project, lo cual esta bien porque ya existen 2 clases llamadas Project y se requiere saber cual es la que va a usar en el proyecto
+
+![assets/47.png](assets/47.png)
+
+Los **namespaces** se utilizan para evitar esta clase de errores y poder identificar que archivo o clase se esta llamando, esto se ve por ejemplo como cuando se crea una carpeta A en la que colocamos un archivo 'Hola.txt', pero dentro de esta carpeta no podemos colocar el mismo archivo si no que este se debe llamar de otra forma por ejemplo 'Hola_v2.txt', esto mismo ocurre en php y para eso se utilizan los **namespaces**.
+
+Dentro del archivo **Project.php** de **lib1** vamos a dejar el siguiente codigo 
+
+```
+<?php
+
+namespace Lib1;
+
+class Project{
+
+}
+```
+
+y dentro del archivo **Project.php** de **app/Models** vamos a dejar el siguiente codigo
+
+```
+<?php
+
+namespace App\Models;
+
+require_once 'BaseElement.php';
+
+class Project extends BaseElement {
+
+}
+```
+
+De manera estandar es comun dejar los **namespaces** de esta forma `namespace App\Models;` entendiendo que hace referencia tambien a las carpetas que contienen el archivo.
+
+![assets/48.png](assets/48.png)
+
+Nuevamente al recargar la pagina sale otro error que indica que el **namespace** no esta en ninguno de los archivos **BaseElement.php, Job.php, Printable.php**
+
+![assets/49.png](assets/49.png)
+
+Se debe agregar `namespace App\Models;`, en **BaseElement.php, Job.php, Printable.php** todos los archivos creados para que no indique un error de este tipo, la sentencia debe estar en primer lugar como lo esta en los anteriores archivos
+
+Al recargar la pagina nuevamente sale otro error que indica que no encuentra a la clase Job, esto pasa porque cuando se hace el llamado a los requires en el archivo **jobs.php**, las clases de los otros archivos si se estan llamando pero estan dentro de los **namespaces**, por tal razon en **jobs.php** se debe hacer uso de la sentencia `use App\Models\Job;`, `use App\Models\Project;`  y `use App\Models\Printable;` o se puede abreviar asi `use App\Models\{Job, Project, Printable};`.
+
+Si se requiere utilizar a **lib1/Project.php**, se puede hacer de la siguiente forma `$projectLib = new Lib1\Project();`}
+
+**jobs.php**
+
+```
+<?php
+
+use App\Models\{Job, Project, Printable};
+
+require 'app/Models/Job.php';
+require 'app/Models/Project.php';
+require_once 'app/Models/Printable.php';
+require_once 'lib1/Project.php';
+
+$job1 = new Job('PHP Developer', 'Este es un trabajo asombroso');
+$job1->months = 16;
+
+$job2 = new Job('Python Dev','Este es un trabajo asombroso');
+$job2->months = 24;
+
+$job3 = new Job('','Este es un trabajo asombroso');
+$job3->months = 32;
+
+$project1 = new Project('Project 1', 'Description 1');
+
+$projectLib = new Lib1\Project();
+
+$jobs = [
+    $job1,
+    $job2,
+    $job3
+   ];
+  
+$projects = [
+    $project1,
+];
+  
+  function printElement(Printable $job) {
+  
+    if($job->visible == false){
+      return;
+    }
+  
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->getTitle() . '</h5>';  
+    echo '<p>' . $job->getDescription() . '</p>';
+    echo '<p>' . $job->getDurationAsString() . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+```
