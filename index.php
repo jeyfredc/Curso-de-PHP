@@ -1,6 +1,6 @@
 <?php
 
-require_once('jobs.php');
+require_once 'jobs.php';
 
 $name = "Jeyfred Calderon";
 $limitMonths = 2000;

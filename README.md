@@ -45,9 +45,9 @@ Curso de php realizado en Platzi
 
 [Clase 22 Namespaces](#Clase-22-Namespaces)
 
-[]()
+[Clase 23 PSR y PHPFIG](#Clase-23-PSR-y-PHPFIG)
 
-[]()
+[Clase 24 Composer](#Clase-24-Composer)
 
 []()
 
@@ -2745,3 +2745,89 @@ $projects = [
     echo '</li>';
   }
 ```
+
+## Clase 23 PSR y PHPFIG
+
+Varios programadores se unieron para crear un grupo llamado PHP-FIG, el cual se encuentra en el siguiente enlace https://www.php-fig.org/ con el objetivo de avanzar en la interoperabilidad de librerías en PHP.
+
+Este grupo creo el PSR(PHP Standards Recomendation) que son recomendaciones y estándares para tu código de PHP.
+
+## Clase 24 Composer
+
+Vamos a añadir a nuestro proyecto un manejador de dependencias de PHP llamado Composer(https://getcomposer.org/), no solo nos ayudara a traer librerías de terceros al proyecto además va a implementar el estándar PSR4 que nos va a permitir tener el cargado de archivos automático.
+
+composer.phar será un documento que nos servirá para manejar las dependencias en PHP, esta va muy de la mano con otro archivo llamado composer.json.
+
+Para implementarlo a la aplicacion que estamos realizando vamos a ir a la seccion de descargas de composer 
+
+![assets/50.png](assets/50.png)
+
+y luego dar click en **Latest Snapshot**
+
+![assets/51.png](assets/51.png)
+
+Automaticamente se va a descargar un archivo llamado **composer.phar**, copiar este archivo a la carpeta **curso.php**
+
+composer funciona basado en un archivo llamado **composer.json** el cual se debe crear en la carpeta **curso.php** y este archivo va a tener las siguientes sentencias se codigo
+
+```
+{
+    "autoload":{
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "require": {}
+}
+```
+
+- `"require": {}` sirve para traer librerias de otro lado, por el momento se deja vacia 
+
+- `"autoload":{` este contiene a `"psr-4": {` que a su vez contiene `"App\\": "app/"`, esto tiene que ver con el estandar creado en https://www.php-fig.org/psr/psr-4/ con la especificacion de PSR4 la cual indica que cuando encuentre algo que inicie con el namespace `"App\\"` va a empezar a buscar desde esta direccion `"app/"`
+
+para poder instalar composer se debe abrir la terminal, en este caso como es linux con las teclas ctrl + alt + t se abre automaticamente la terminal o se puede buscar en el menu
+
+Primero verificar en que sitio estan con pwd
+
+![assets/52.png](assets/52.png)
+
+para encontrar la ruta debo devolverme 2 carpetas atras para poder ubicar el directorio, con el comando cd ..
+
+![assets/53.png](assets/53.png)
+
+luego listo las carpetas que existen con el comando ls
+
+![assets/54.png](assets/54.png)
+
+y la carpeta se encuentra en la siguiente ruta
+
+![assets/55.png](assets/55.png)
+
+En la terminal se puede ejecutar el siguiente comando `php composer.phar`, esto aplica si el archivo ya se encuentra dentro de la carpeta
+
+puede aparecer un mensaje como el siguiente 
+
+```
+No se ha encontrado la orden «php», pero se puede instalar con:
+
+sudo apt install php7.4-cli
+
+```
+
+Si aparece ejecutar `sudo apt install php7.4-cli` y esperar que se realice la instalacion y nuevamente ejecutar `php composer.phar`
+
+Al ejecutar va a salir todo el sistema de ayuda de composer
+
+nuevamente en la terminal ejecutar `php composer.phar install`
+
+Esto lo que va a hacer es crear dentro de la carpeta **curso_php** otra carpeta llamada **vendor**, la cual trae una subcarpeta llamada **composer** y un archivo llamado **autoload.php**, dentro de composer existen mas archivos con nombre autoload.
+
+Si entra al archivo **autoload_psr4.php** se genero un arreglo que dice que namespace de `'App\\'` va a buscar en el directorio `'/app'`
+
+![assets/56.png](assets/56.png)
+
+Ahora en el archivo **jobs.php**, se puede quitar todo lo que este en require y require_once y solo dejar uno que establezca la ruta `require_once 'vendor/autoload.php'` y quitar `$projectLib = new Lib1\Project();`
+
+![assets/57.png](assets/57.png)
+
+verificar que el navegador cargue correctamente, despues de esto en los archivos tambien se puede quitar todo lo que este con require o require_once a execpcion de **index.php**
