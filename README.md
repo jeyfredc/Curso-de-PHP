@@ -37,7 +37,7 @@ Curso de php realizado en Platzi
 
 [Clase 18 Constructor y Métodos](#Clase-18-Constructor-y-Métodos)
 
-[]()
+[Clase 19 Herencia](#Clase-19-Herencia)
 
 []()
 
@@ -2018,3 +2018,363 @@ $jobs = [
 ```
 
 ![assets/33.png](assets/33.png)
+
+**para saber mas sobre metodos magicos dar click en el siguiente enlace donde encontre una explicacion completa sobre estos** https://diego.com.es/metodos-magicos-en-php
+
+## Clase 19 Herencia
+
+La herencia permite que ciertas clases hereden características de una clase padre. Esta clase se llamará hijo.
+
+Como una buena práctica en PHP lo mejor es tener dividido el código en diferentes archivos. Dentro de la carpeta del curso ahora se va a crear una subcarpeta llamada **app** y dentro de esta se crea una subcarpeta que se llamaara **Models** dentro de esta se va a crear la clase padre que va a tener un archivo llamado **BaseElement.php**. 
+
+Y este va contener la clase `Job` que antes habiamos creado en el archivo de **jobs.php**, entonces cortar y pegar en el nuevo archivo y cambiar el nombre de la clase de `Job` por `BaseElement` el cual es igual al nombre del archivo, esto permite que sea mas facil encontrarlo 
+
+```
+<?php
+
+class BaseElement{
+    private $title;
+    public $description;
+    public $visible = true;
+    public $months;
+
+    public function __construct($title, $description){
+      $this->setTitle($title); 
+      $this->description = $description;
+    }
+
+
+    public function setTitle($title){
+      if($title == ''){
+        $this->title = 'N/A';
+      }else{
+        $this->title = $title;
+      }
+    }
+
+    public function getTitle(){
+        return $this->title;
+    }
+
+    public function getDurationAsString(){
+      $years = floor($this->months / 12);
+      $extraMonths = $this->months % 12;
+
+      if($years == 0){
+        return "$extraMonths months";
+      }else{
+        return "$years years $extraMonths months";
+      }
+    }
+}
+```
+
+Ahora dentro de la carpeta **Models** crear otro archivo llamado **Job.php**
+
+La herencia la expresaremos con la palabra reservada extends y esto es lo que se va a realizar en este nuevo archivo que contiene el siguiente codigo y hereda de `BaseElement`
+
+```
+<?php
+
+require 'BaseElement.php';
+
+class Job extends BaseElement{
+
+}
+```
+
+Ahora dentro del archivo **jobs.php**, lo que se debe hacer es mandar a llamar al archivo **Job.php** para poder utilizar la clase `Job`
+
+Es muy conveniente utilizar require_once cuando queremos utilizar herencia e incluir clases que están en otros archivos.
+
+```
+<?php
+
+require 'app/Models/Job.php';
+
+$job1 = new Job('PHP Developer', 'Este es un trabajo asombroso');
+$job1->months = 16;
+
+$job2 = new Job('Python Dev','Este es un trabajo asombroso');
+$job2->months = 24;
+
+$job3 = new Job('','Este es un trabajo asombroso');
+$job3->months = 32;
+
+$jobs = [
+    $job1,
+    $job2,
+    $job3
+//     ['title' => 'PHP Developer',
+//       'description' => 'Este es un trabajo asombroso',
+//       'visible' => true,
+//       'months' => 16],
+//     ['title' => 'Python Dev',
+//     'visible' => false,
+//     'months' => 4],
+//     ['title' => 'Devops',
+//     'visible' => true,
+//     'months' => 6],
+//     ['title' => 'Node Dev',
+//     'visible' => true,
+//     'months' => 2],
+//     ['title' => 'Frontend Dev',
+//     'visible' => true,
+//     'months' => 13]  
+   ];
+  
+    
+  
+  function printJob($job) {
+  
+    if($job->visible == false){
+      return;
+    }
+  
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->getTitle() . '</h5>';  
+    echo '<p>' . $job->description . '</p>';
+    echo '<p>' . $job->getDurationAsString() . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+```
+Y ahora guardar y volver a cargar el navegador, verificando que todo este funcion correctamente
+
+___
+
+Ahora dentro de la carpeta **Models**, crear un nuevo archivo o modelo que se llame **Project.php** donde se va a crear otra clase y este archivo va a heredar de **BaseElement.php**
+
+```
+<?php
+
+require 'BaseElement.php';
+
+class Project extends BaseElement {
+    
+}
+```
+
+Ahora en el archivo **jobs.php**, se le va indicar que establezca el nuevo modelo creado **Project.php** de la siguiente forma
+
+```
+<?php
+
+
+require 'app/Models/Job.php';
+require 'app/Models/Project.php';
+
+```
+
+Ahora al recargar el navegador va a aparecer un error en la linea 3 del archivo **jobs.php**
+
+![assets/34.png](assets/34.png)
+
+Esto sucede porque los 2 modelos creados estan haciendo un `require 'BaseElement.php';`, como se esta haciendo 2 veces la clase se esta intentando re declarar, para esto es que se usa `require_once`, lo cual permite que el archivo se mande llamar una vez. 
+
+Dentro de los 2 modelos Job y Project cambiar `require` por `require_once` y nuevamente volver a cargar el navegador
+
+![assets/33.png](assets/33.png)
+
+Ahora dentro del archivo **jobs.php** instanciar un nuevo objeto de la clase projects y tambien añadir un nuevo array, la funcion `printJob` modificarla y cambiarla por `printElement` porque esta ya no solo va a imprimir trabajos. 
+
+**jobs.php**
+
+```
+<?php
+
+require 'app/Models/Job.php';
+require 'app/Models/Project.php';
+
+$job1 = new Job('PHP Developer', 'Este es un trabajo asombroso');
+$job1->months = 16;
+
+$job2 = new Job('Python Dev','Este es un trabajo asombroso');
+$job2->months = 24;
+
+$job3 = new Job('','Este es un trabajo asombroso');
+$job3->months = 32;
+
+$project1 = new Project('Project 1', 'Description 1');
+
+$jobs = [
+    $job1,
+    $job2,
+    $job3
+   ];
+  
+$projects = [
+    $project1,
+];
+  
+  function printElement($job) {
+  
+    if($job->visible == false){
+      return;
+    }
+  
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->getTitle() . '</h5>';  
+    echo '<p>' . $job->description . '</p>';
+    echo '<p>' . $job->getDurationAsString() . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+```
+
+Como se modifico la funcion `printJob` por print `printElement` tener en cuenta que tambien se debe cambiar en **index.php**, porque de otra forma no puede mandar a llamar la funcion, adicional se va a duplicar el codigo de php que hacia parte del `Work Experiences` para tambien poder usarlo con los proyectos en la parte siguiente que es `Projects`
+
+```
+            <ul>
+            <?php
+          
+            for($idx=0; $idx < count($projects); $idx++){ 
+              printElement($projects[$idx]);
+            }
+          ?>
+          </ul>
+```
+
+![assets/35.png](assets/35.png)
+
+Guardar y recargar el navegador para verificar que ya este trayendo los parametros que se paso en la clase Project
+
+![assets/36.png](assets/36.png)
+
+Hasta el momento los modelos **Job y Project** estan heredando de la clase padre que es **BaseElement**
+
+Dentro de nuestra clase hijo **Job** podemos sobrescribir algún método del padre **BaseElement**, esto es un concepto que conocemos como polimorfismo. Lo que polimorfismo quiere decir es que tendremos un método que va a funcionar de acuerdo con su contexto donde es llamado.
+
+de la clase padre **BaseElement**  que esta en **BaseElement.php** vamos a copiar la funcion completa de `getDurationAsString` a la clase **Job** que esta en **Job.php** y en el return de **Job.php** utilizar Job:duration `return "Job duration: $years years $extraMonths months";`
+
+```
+    public function getDurationAsString(){
+        $years = floor($this->months / 12);
+        $extraMonths = $this->months % 12;
+  
+        if($years == 0){
+          return "$extraMonths months";
+        }else{
+          return "Job duration: $years years $extraMonths months";
+        }
+      }
+```
+
+![assets/37.png](assets/37.png)
+
+La definicion tiene que ser identica a la de la clase padre para que funcione de la misma forma pero solamente `Job duration:` va a funcionar solo en la clase Job, como se puede apreciar en la imagen en Jobs sale pero en Projects no
+
+![assets/38.png](assets/38.png)
+
+Ahora en el archivo **Job.php** se va a usar el metodo contructor, pero si este se usa soobreescribe al metodo de la Clase Padre
+
+```
+<?php
+
+require_once 'BaseElement.php';
+
+class Job extends BaseElement{
+
+    public function __construct(){
+
+    }
+
+    public function getDurationAsString(){
+        $years = floor($this->months / 12);
+        $extraMonths = $this->months % 12;
+  
+        if($years == 0){
+          return "$extraMonths months";
+        }else{
+          return "Job duration: $years years $extraMonths months";
+        }
+      }
+}
+```
+
+Al recargar el navegador ya no van a aparecer los titulos ni descripcion de los trabajos
+
+![assets/39.png](assets/39.png)
+
+Si se requiere utilizar los mismos parametros se deben colocar los mismos en el metodo constructor y añadir `parent::__construct($title, $description);` con los mismos parametros
+
+```
+<?php
+
+require_once 'BaseElement.php';
+
+class Job extends BaseElement{
+
+    public function __construct($title, $description){
+      parent::__construct($title, $description);
+    }
+
+    public function getDurationAsString(){
+        $years = floor($this->months / 12);
+        $extraMonths = $this->months % 12;
+  
+        if($years == 0){
+          return "$extraMonths months";
+        }else{
+          return "Job duration: $years years $extraMonths months";
+        }
+      }
+}
+```
+
+![assets/38.png](assets/38.png)
+
+Si los parametros se quieren re escribir tambien se puede establecer, sobreescribiendo la variable del constructor del padre
+
+```
+<?php
+
+require_once 'BaseElement.php';
+
+class Job extends BaseElement{
+
+    public function __construct($title, $description){
+      $newTitle = 'Job: ' . $title;
+      parent::__construct($newTitle, $description);
+    }
+
+    public function getDurationAsString(){
+        $years = floor($this->months / 12);
+        $extraMonths = $this->months % 12;
+  
+        if($years == 0){
+          return "$extraMonths months";
+        }else{
+          return "Job duration: $years years $extraMonths months";
+        }
+      }
+}
+```
+
+![assets/40.png](assets/40.png)
+
+Si tenemos propiedades con la palabra private en nuestra clase padre **BaseElement**, desde nuestra clase hija **Job**no podremos acceder a esta propiedad.
+
+![assets/41.png](assets/41.png)
+
+Al recargar el navegador vuelve a desaparecer el titulo y la descripcion
+
+![assets/39.png](assets/39.png)
+
+Pero si queremos que siga siendo privada y que las clases hijas tengan acceso podemos usar la palabra clave protected.
+
+![assets/42.png](assets/42.png)
+
+Al recargar el navegador vuelve a aparecer el titulo y la descripcion
+
+![assets/40.png](assets/40.png)
