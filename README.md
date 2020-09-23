@@ -2416,3 +2416,207 @@ Este concepto es un tipo de polimorfismo el cual llamamos Sobreescritura y lo qu
 Un ejemplo de uso para esta cadena de herencia es, por ejemplo, si tenemos una lista de productos, algunos de ellos son libros y otros álbumes, y si queremos saber las ganancias totales, simplemente tenemos que recorrer los elementos e ir sumando el resultado del método getProfit y en cada caso el objeto sabrá cuál fórmula utilizar porque está definida dentro de su clase.
 
 En resumen la herencia nos permite reutilizar código entre nuestras clases y el polimorfismo, en este ejemplo la sobreescritura, nos ayudará a que las clases puedan reaccionar de una manera diferente a métodos con el mismo nombre.
+
+## Clase 21 Interfaces
+
+Las interfaces se pueden ver como un contrato o un acuerdo en el que se pueden estandarizar el uso de ciertas cosas.
+
+En la carpeta **Models** crear un archivo que se va a llamar **Printable.php**, este archivo es donde se va a crear la interfaz, la palabra reservada que utilizaremos para declarar una interfaz será **interface**. 
+
+```
+<?php
+
+interface Printable{
+    public function getDescription();
+
+}
+```
+
+para poder utilizar la interfaz `Printable` en php podemos usar una caracteristica del lenguaje que se llama **Type Hinting** donde estableceremos el tipo de dato que esperamos ya sea una clase o un tipo de dato específico.
+
+En la funcion `printElement` del archivo **jobs.php** se va a pasar en el parametro a `Printable` de esta forma `function printElement(Printable $job)`, tambien se debe importar a **printable.php** `require_once 'app/Models/Printable.php';`, lo que se esta indicando es que todo lo que llegue a la funcion `printElement` cumpla con la interfaz `Printable`
+
+```
+<?php
+
+require 'app/Models/Job.php';
+require 'app/Models/Project.php';
+require_once 'app/Models/Printable.php';
+
+$job1 = new Job('PHP Developer', 'Este es un trabajo asombroso');
+$job1->months = 16;
+
+$job2 = new Job('Python Dev','Este es un trabajo asombroso');
+$job2->months = 24;
+
+$job3 = new Job('','Este es un trabajo asombroso');
+$job3->months = 32;
+
+$project1 = new Project('Project 1', 'Description 1');
+
+$jobs = [
+    $job1,
+    $job2,
+    $job3
+   ];
+  
+$projects = [
+    $project1,
+];
+  
+  function printElement(Printable $job) {
+  
+    if($job->visible == false){
+      return;
+    }
+  
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->getTitle() . '</h5>';  
+    echo '<p>' . $job->description . '</p>';
+    echo '<p>' . $job->getDurationAsString() . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+```
+Al guardar y recargar el navegador va a aparecer un error que indica que el argumento 1 debe implementar la interfaz Printable
+
+![assets/44.png](assets/44.png)
+
+para poder obligar a implementar la interfaz, donde esta `echo '<p>' . $job->description . '</p>';`, se reemplaza por `echo '<p>' . $job->getDescription() . '</p>';`.
+
+Ahora en el archivo **Job.php** se crea la funcion dentro de la clase `Job`
+
+```
+    public function getDescription(){
+      return $this->description;
+    } 
+```
+Pero el hecho de crear la funcion no quiere decir que ya se esta cumpliendo con la implementacion para eso en el constructor se debe indicar explicitamente que implementa a Printable asi `class Job extends BaseElement implements Printable` y tambien se debe indicar el uso del archivo `require_once 'Printable.php';`
+
+```
+<?php
+
+require_once 'BaseElement.php';
+require_once 'Printable.php';
+
+class Job extends BaseElement implements Printable{
+
+    public function __construct($title, $description){
+      $newTitle = 'Job: ' . $title;
+      $this->title = $newTitle;
+    }
+
+    public function getDurationAsString(){
+        $years = floor($this->months / 12);
+        $extraMonths = $this->months % 12;
+  
+        if($years == 0){
+          return "$extraMonths months";
+        }else{
+          return "Job duration: $years years $extraMonths months";
+        }
+      }
+
+    public function getDescription(){
+      return $this->description;
+    } 
+}
+```
+
+Al utilizar la palabra reservada **implements** se le esta indicando a la clase que debe implementar la interfaz
+
+Al recargar la pagina, vemos que aparece toda la parte de Work Experience pero no Projects porque esta no esta implementando a Printable
+
+![assets/45.png](assets/45.png)
+
+La herencia en PHP es de forma sencilla es decir solo que podrá hacer herencia de una sola clase o un solo padre.
+
+En cambio en diferentes clases se pueden implementar diferentes interfaces y tambien si se implementa en una clase padre se hereda a los hijos.
+
+Por tal razon en vez de implementar en la Clase Job, se va a implementar ahora en la clase Padre. el archivo **Job.php** queda asi 
+
+```
+<?php
+
+require_once 'BaseElement.php';
+
+class Job extends BaseElement{
+
+    public function __construct($title, $description){
+      $newTitle = 'Job: ' . $title;
+      $this->title = $newTitle;
+    }
+
+    public function getDurationAsString(){
+        $years = floor($this->months / 12);
+        $extraMonths = $this->months % 12;
+  
+        if($years == 0){
+          return "$extraMonths months";
+        }else{
+          return "Job duration: $years years $extraMonths months";
+        }
+      }
+}
+```
+
+Ahora se implementa y se crea en la clase padre `BaseElement`, el archivo **BaseElement.php** queda asi
+
+```
+<?php
+
+require_once 'Printable.php';
+
+class BaseElement implements Printable {
+    protected $title;
+    public $description;
+    public $visible = true;
+    public $months;
+
+    public function __construct($title, $description){
+      $this->setTitle($title); 
+      $this->description = $description;
+    }
+
+
+    public function setTitle($title){
+      if($title == ''){
+        $this->title = 'N/A';
+      }else{
+        $this->title = $title;
+      }
+    }
+
+    public function getTitle(){
+        return $this->title;
+    }
+
+    public function getDurationAsString(){
+      $years = floor($this->months / 12);
+      $extraMonths = $this->months % 12;
+
+      if($years == 0){
+        return "$extraMonths months";
+      }else{
+        return "$years years $extraMonths months";
+      }
+    }
+
+    public function getDescription(){
+      return $this->description;
+    } 
+}
+
+```
+
+De esta forma en el navegador todo aparecera correctamente 
+
+![assets/39.png](assets/39.png)
+
+El proposito de la interfaz es que esta sea publica por eso va estar siempre como `public function`.
+

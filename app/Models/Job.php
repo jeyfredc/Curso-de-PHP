@@ -7,6 +7,7 @@ class Job extends BaseElement{
     public function __construct($title, $description){
       $newTitle = 'Job: ' . $title;
       $this->title = $newTitle;
+      $this->description = $description;
     }
 
     public function getDurationAsString(){
