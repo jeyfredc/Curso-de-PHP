@@ -49,7 +49,7 @@ Curso de php realizado en Platzi
 
 [Clase 24 Composer](#Clase-24-Composer)
 
-[]()
+[Clase 25 Introducción a las Bases de Datos](#Clase-25-Introducción-a-las-Bases-de-Datos)
 
 []()
 
@@ -2831,3 +2831,51 @@ Ahora en el archivo **jobs.php**, se puede quitar todo lo que este en require y 
 ![assets/57.png](assets/57.png)
 
 verificar que el navegador cargue correctamente, despues de esto en los archivos tambien se puede quitar todo lo que este con require o require_once a execpcion de **index.php**
+
+## Clase 25 Introducción a las Bases de Datos
+
+Las bases de datos son colecciones de datos que podemos usar para consultarla almacenarla, ejecutar filtros, etc.
+
+Cuando hablamos de aplicaciones web trabajaremos con sistemas manejadores de bases de datos, o también conocidos como bases de datos relacionales como lo son **MySQL, MariaDB, PostgreSQL, etc**.
+
+Lo que hacen estos sistemas es crear tablas donde se agregan columnas y en las columnas se van agregando datos.
+
+Despues se pueden crear consultas para traer esos datos y utilizarlo en las aplicaciones. Por ejemplo en el proyecto podemos usar los jobs, projects y datos del usuario, los cuales estaremos almacenando en la base de datos.
+
+A continuacion en el navegador abrir http://localhost/phpmyadmin/
+
+En linux, en caso de que no funcione la base de datos ejecutar 
+
+```
+sudo /opt/lampp/manager-linux-x64.run
+```
+
+y prender MySQL Database y despues si ir al navegador
+
+![assets/3.png](assets/3.png)
+
+XAMPP viene con una herramienta llamada phpMyAdmin que es un cliente el cual se conecta a una base de datos, en este caso se conecta a MariaDB.
+
+Para crear una nueva base de datos dar click en New
+
+![assets/58.png](assets/58.png)
+
+llamar la base de datos cursophp y luego dar click en create
+
+![assets/59.png](assets/59.png)
+
+Luego nombrar la primer tabla que sera jobs y tendra 5 columnas, dar click en **Go**
+
+![assets/60.png](assets/60.png)
+
+La recomendacion para una base de datos relacional es que su primer columna sea un id de tipo entero, Primary y este marcada la casilla **AI** que significa autoincremental, colocar los nombres y tipos como la imagen y luego dar click en save
+
+![assets/61.png](assets/61.png)
+
+Esta es la vista desde la pestaña **Structure** 
+
+![assets/62.png](assets/62.png)
+
+Esta es la vista desde la pestaña **Browse**
+
+![assets/63.png](assets/63.png)
