@@ -53,7 +53,54 @@ Curso de php realizado en Platzi
 
 [Clase 26 ORM](#Clase-26-ORM)
 
+[Clase 27 Formularios](#Clase-27-Formularios)
+
 []()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
+[]()
+
 
 
 ## Clase 1 Presentación del curso
@@ -2889,3 +2936,92 @@ En un inicio PHP tenia librerias que manejaban un estilo de programacion estruct
 Un ORM, que significa Object Relational Mapping, es un concepto en el cual vamos a crear dentro de nuestro código algunos modelos basados en las tablas de nuestra base de datos.
 
 Una principal característica de un ORM es que hace más transparente las conexiones a PostgreSQL y MySQL, además nos protege de algunas vulnerabilidades de SQL y facilita algunas validaciones a la información.
+
+## Clase 27 Formularios
+
+Antes de comenzar a interactuar con la base de datos, primero se debe entender como empezar a enviar los datos desde el cliente hacia el servidor, esto se hace desde el Frontend, es decir desde la parte que esta viendo el usuario hacia el servidor donde se va a poder procesar y almacenar esa informacion.
+
+En la carpeta **curso_php** crear un archivo que se llame **addJob.php**, se coloca un codigo de prueba dentro del archivo
+
+```
+<?php
+
+echo 'add Job';
+```
+
+se guarda y ahora se recarga el navegador con la ruta http://localhost/curso_php/addJob.php . Se puede observar que aparece el codigo de prueba que acabamos de colocar 
+
+![assets/64.png](assets/64.png)
+
+lo que esta en **index.php**, es diferente de lo que tenemos en el archivo **addJob.php**, ahora lo que se va a hacer es borrar el codigo de prueba y alli crear un formulario, el cual queda asi 
+
+```
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Job</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css"
+        integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Add Job</h1>
+    <form action="">
+        <label for="">Title:</label>
+        <input type="text" name="title"><br>
+        <label for="">Description:</label>
+        <input type="text" name="description"><br>
+        <button type="submit">Save</button>
+    </form>
+
+</body>
+
+</html>
+```
+El `<form action="">` indica hacia donde o hacia que pagina vamos a enviar los valores `title` y `description`, como esta vacio, se esta enviando hacia la misma pagina
+
+![assets/65.png](assets/65.png)
+
+El cuadro resaltado en rojo significa que la pagina esta recibiendo los valores que se pasaron en cada uno de los campos y se enviaron al hacer click en save
+
+No es buena practica dejar el campor de action vacio por lo tanto se va agregar `<form action="addJob.php">`, por el momento la pagina va a seguir funcionando de la misma manera del ejemplo anterior.
+
+Antes del codigo HTML, se va a agregar sintaxis de PHP utilizando variables llamadas super globales, estas son variables que provee PHP que permiten acceder a ciertas partes como la sesion, cookies, parametros que enviamos, valores del servidor, etc 
+
+Podemos enviar información desde un formulario a través de diferentes métodos, GET o POST. Para acceder a esta información desde PHP llamaremos a $_GET y $_POST, estas son variables super globales.
+Recuerda que para hacer debugging de una variable usamos la función var_dump.
+
+El codigo asignado encima antes de nuestro HTML queda de la siguiente forma 
+
+```
+<?php
+var_dump($_GET);
+
+?>
+```
+
+si se recarga el navegador se puede apreciar que se esta recibiendo un arreglo con 2 elementos, donde el primer elemento se llama `title` y tiene el valor **t1** y el segundo elemento que se llama `description`, que tiene el valor **d1**
+
+![assets/66.png](assets/66.png)
+
+esta informacion que se esta enviando con el metodo $_GET, ahora dentro de el form action se va a agregar el metodo post `<form action="addJob.php" method="post">`
+
+Ahora refrescar la pagina y enviar otro tipo de informacion como el ejemplo a continuacion
+
+aqui se estan pasando dos datos pero al hacer $_GET, ya esta trayendo un array vacio o con 0 elementos
+
+![assets/66.png](assets/66.png)
+
+Si ahora dentro de nuestro codigo de PHP hacemos dump de $POST, vamos a traer un array vacio con get y un array con informacion en POST
+
+```
+<?php
+var_dump($_GET);
+var_dump($_POST);
+?>
+```
