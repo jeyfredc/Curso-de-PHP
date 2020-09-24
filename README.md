@@ -3015,7 +3015,7 @@ Ahora refrescar la pagina y enviar otro tipo de informacion como el ejemplo a co
 
 aqui se estan pasando dos datos pero al hacer $_GET, ya esta trayendo un array vacio o con 0 elementos
 
-![assets/66.png](assets/66.png)
+![assets/67.png](assets/67.png)
 
 Si ahora dentro de nuestro codigo de PHP hacemos dump de $POST, vamos a traer un array vacio con get y un array con informacion en POST
 
@@ -3025,3 +3025,7 @@ var_dump($_GET);
 var_dump($_POST);
 ?>
 ```
+
+Recargar pagina
+
+![assets/68.png](assets/68.png)
