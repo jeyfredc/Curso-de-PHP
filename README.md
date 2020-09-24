@@ -51,7 +51,7 @@ Curso de php realizado en Platzi
 
 [Clase 25 Introducción a las Bases de Datos](#Clase-25-Introducción-a-las-Bases-de-Datos)
 
-[]()
+[Clase 26 ORM](#Clase-26-ORM)
 
 []()
 
@@ -2879,3 +2879,13 @@ Esta es la vista desde la pestaña **Structure**
 Esta es la vista desde la pestaña **Browse**
 
 ![assets/63.png](assets/63.png)
+
+## Clase 26 ORM
+
+Existen diversas cosas que sirven para conectarnos a la base de datos, crear consultas, insertar datos, actualizarlos, eliminarlos y PHP desde sus inicios siempre tuvo extensiones que permitian tener comunicacion con sistemas manejadores de datos.
+
+En un inicio PHP tenia librerias que manejaban un estilo de programacion estructurado, despues fue avanzando en orientacion a objetos. Despues del tiempo PHP decidio crear una capa de datos que se conoce como PDO(PHP Data Object), la cual es una capa que permite estandarizar como trabajamos con sistemas manejadores de datos
+
+Un ORM, que significa Object Relational Mapping, es un concepto en el cual vamos a crear dentro de nuestro código algunos modelos basados en las tablas de nuestra base de datos.
+
+Una principal característica de un ORM es que hace más transparente las conexiones a PostgreSQL y MySQL, además nos protege de algunas vulnerabilidades de SQL y facilita algunas validaciones a la información.
