@@ -4,6 +4,7 @@ require_once 'vendor/autoload.php';
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use App\Models\Job;
+use App\Models\Project;
 
 $capsule = new Capsule;
 
@@ -31,6 +32,13 @@ if(!empty($_POST)){
     $job->save();
 }
 
+if(!empty($_POST)){
+    $job = new Project();
+    $job->title = $_POST['title'];
+    $job->description = $_POST['description'];
+    $job->save();
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -48,6 +56,16 @@ if(!empty($_POST)){
 
 <body>
     <h1>Add Job</h1>
+    <form action="addJob.php" method="post" >
+        <label for="">Title:</label>
+        <input type="text" name="title"><br>
+        <label for="">Description:</label>
+        <input type="text" name="description"><br>
+        <button type="submit">Save</button>
+    </form>
+<br>
+
+    <h1>Add Project</h1>
     <form action="addJob.php" method="post" >
         <label for="">Title:</label>
         <input type="text" name="title"><br>

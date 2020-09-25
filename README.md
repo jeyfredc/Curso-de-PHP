@@ -59,7 +59,7 @@ Curso de php realizado en Platzi
 
 [Clase 29 Listar registros de la base de datos con Eloquent](#Clase-29-Listar-registros-de-la-base-de-datos-con-Eloquent)
 
-[]()
+[Clase 30 Insertar datos en MySql con PHP](#Clase-30-Insertar-datos-en-MySql-con-PHP)
 
 []()
 
@@ -3379,3 +3379,399 @@ y ahora verificar en la principal que esto tambien se haya cargado
 
 **RETO:** Realiza la página para añadir projects, el modelo para que guarde la información y después muestra la información en la página principal.
 
+## Clase 30 Insertar datos en MySql con PHP
+
+Esta clase se trata de crear un CRUD(Create, Read, Updated, Delete), es una aplicacion para crear una lista de tareas que se llama **Todo List** que esta en el repositorio de Platzi https://github.com/hectorbenitez/php-database-crud, esta aplicacion tiene un campo para agregar tareas, marcar si ya se hizo o borrar tareas.
+
+![assets/88.png](assets/88.png)
+
+Para poder descargarlo, debemos ingresar por medio de la terminal a la carpeta htdocs y crear un directorio con el comando `mkdir crud` y alli realizar un clon del repositorio de platzi
+
+![assets/85.png](assets/85.png)
+
+dentro de nuestra carpeta **crud** queda una subcarpeta llamada **php-database-crud** donde estan todos los archivos de GitHub
+
+Recordar que se debe descargar el archivo **composer.phar**, ver clase 24 para recordar como hacerlo [Clase 24 Composer](#Clase-24-Composer) y ubicarlo en la ruta que corresponda en mi caso es **opt/lampp/htdocs/crud/php-database-crud** y luego en la terminal ejecutar
+
+```
+php composer.phar require illuminate/database
+```
+
+para instalar todas las dependencias.
+
+En PHP MyAdmin se debe crear otra base de datos que se llama **todo** y la tabla se va a llamar **task** que contiene 5 columnas que van a ser id, description, created_at, updated_at y done.
+
+![assets/86.png](assets/86.png)
+
+![assets/87.png](assets/87.png)
+
+En la parte del campo **Done** colocar Null por Default
+
+En el archivo **index.php**, ya tenemos una configuracion inicial que es la que descargamos del repositorio, esto ya existe en ese archivo. se van a explicar algunas lineas de codigo
+
+Esta es la parte del despliegue de errores de PHP, el cual esta activo por el aprendizaje que estamos obteniendo
+
+```
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+```
+
+Estamos utilizando composer porque estamos incluyendo librerias de terceros y permite manejar el autoload que es compatible con PSR4 (PHP Standard Recomendation 4).
+
+Estamos utilizando un objeto request que esta generado por una libreria de Zend llamado Diactoros. Esta libreria es compatible con otra libreria que es el PSR7, que es el estandar para mensajes http entre aplicacion PHP
+
+```
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
+```
+
+Tambien utilizamos una libreria que se llama Relay `use Relay\Relay;`, junto con una libreria que se llama `Aura\Router\` para generar un sistema de ruteo dentro de la aplicacion.
+
+Como motor de Engine Templates se esta haciendo uso de Twig que es el motor de templates que usa simfony, que es otro de los Frameworks mas importantes de PHP.
+
+Aqui se esta cargando el motor de templates 
+
+```
+$loader = new Twig_Loader_Filesystem('.');
+$twig = new \Twig_Environment($loader, array(
+    'debug' => true,
+    'cache' => false,
+));
+
+```
+
+Despues se generan las rutas, en el momento solo hay una ruta que es la raiz **'/crud/php-database-crud/'** **Nota:** Se coloca esta ruta por defecto porque es como esta configurada en la instalacion de mi computador. por defecto al descargar del repositorio viene con una ruta vacia **'/'**
+
+```
+$router = new Aura\Router\RouterContainer();
+$map = $router->getMap();
+$map->get('todo.list', '/crud/php-database-crud/', function ($request) use ($twig) {
+```
+
+la ruta tiene un arreglo estatico con unas tareas que pertenecen al template
+
+```
+{
+    $tasks = [
+        [
+            'id' => 1,
+            'description' => 'Aprender inglés',
+            'done' => false
+        ],
+        [
+            'id' => 1,
+            'description' => 'Hacer la tarea',
+            'done' => true
+        ],
+        [
+            'id' => 1,
+            'description' => 'Pasear al perro',
+            'done' => false
+        ],
+        [
+            'id' => 1,
+            'description' => 'Ver el curso de introducción a PHP',
+            'done' => false
+        ]
+    ];
+```
+
+y despues se genera una respuesta 
+
+ ```
+    $response = new Zend\Diactoros\Response\HtmlResponse($twig->render('template.twig', [
+        'tasks' => $tasks
+    ]));
+    return $response;
+});
+ ```
+
+ La cual despues es manejada por el sistema de ruteo 
+
+ ```
+$relay = new Relay([
+    new Middlewares\AuraRouter($router),
+    new Middlewares\RequestHandler()
+]);
+
+$response = $relay->handle($request);
+
+foreach ($response->getHeaders() as $name => $values) {
+    foreach ($values as $value) {
+        header(sprintf('%s: %s', $name, $value), false);
+    }
+}
+echo $response->getBody();
+ ```
+
+A continuacion lo que hay que hacer es crear una clase que se llama **Task.php** dentro de la carpeta **php-database-crud** para relacionar la base de datos con el template, el archivo contiene el siguiente codigo
+
+```
+<?php
+
+use Illuminate\Database\Eloquent\Model;
+
+class Task extends Model {
+    protected $table = 'task';
+}
+```
+
+para continuar con la configuracion
+
+Ahora en el archivo **index.php** se añade la clase **Task.php** `require_once 'Task.php';`. Tambien se debe crear la conexion a la base de datos revisar documentacion https://packagist.org/packages/illuminate/database
+
+
+Antes de continuar y agregar el codigo se debe tener en cuenta que existe un archivo llamado **Node.php** siguiendo esta ruta **/vendor/twig/twig/Node.php**, este archivo esta desactualizado y se tiene que cambiar la sintaxis, viene por defecto de esta forma entre la linea 39 y 49
+
+```
+    {
+        foreach ($nodes as $name => $node) {
+            if (!$node instanceof self) {
+                throw new InvalidArgumentException(sprintf('Using "%s" for the value of node "%s" of "%s" is not supported. You must pass a Twig_Node instance.', is_object($node) ? get_class($node) : null === $node ? 'null' : gettype($node), $name, get_class($this)));
+            }
+        }
+        $this->nodes = $nodes;
+        $this->attributes = $attributes;
+        $this->lineno = $lineno;
+        $this->tag = $tag;
+    }
+```
+
+Se debe cambiar con la siquiente sintaxis
+
+```
+    {
+        foreach ($nodes as $name => $node) {
+            if (!$node instanceof self) {
+                throw new InvalidArgumentException(sprintf('Using "%s" for the value of node "%s" of "%s" is deprecated since version 1.25 and will be removed in 2.0.', \is_object($node) ? \get_class($node) : (null === $node ? 'null' : \gettype($node)), $name, \get_class($this)), E_USER_DEPRECATED);
+            }
+        }
+        $this->nodes = $nodes;
+        $this->attributes = $attributes;
+        $this->lineno = $lineno;
+        $this->tag = $tag;
+    }
+```
+
+Tambien existe un archivo llamado **Core.php**, que tambien esta desactualizado, se encuentra en la ruta **/vendor/twig/twig/lib/Twig/Extension/Core.php** y para que funcione correctamente la aplicacion se deben comentar las lineas 1529 a 1541
+
+```
+    // if (/* Twig_Template::METHOD_CALL */ 'method' !== $type) {
+    //     if (isset($object->$item) || array_key_exists((string) $item, $object)) {
+    //         if ($isDefinedTest) {
+    //             return true;
+    //         }
+
+    //         if ($sandboxed) {
+    //             $env->getExtension('Twig_Extension_Sandbox')->checkPropertyAllowed($object, $item);
+    //         }
+
+    //         return $object->$item;
+    //     }
+    // }
+```
+
+Modificar el archivo **template.twig**, donde se hace una modificacion a las rutas
+
+```
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css" >
+
+    <title>Todo List</title>
+  </head>
+  <body>
+    <div class="container" >
+        <div class="row" >
+            <div class="col header" >
+                <h1>Todo List</h1>
+                <form action="add" method="post" >
+                <input class="form-control" type="text" name="description" >
+                <br>
+                <button class="btn btn-primary" type="submit">Add Task</button>
+                </form>
+            </div>
+        </div>
+
+        <ul class="list-group">
+            {% for task in tasks %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span 
+                    {% if task.done %} style="text-decoration: line-through;" {% endif %}
+                >
+                {{ task.description }}
+                </span>
+                <span>
+                {% if task.done %}
+                    <a href="uncheck/{{ task.id }}" ><i class="far fa-check-square" style="color:green;" ></i></a>
+                {% else %}
+                    <a href="check/{{ task.id }}" ><i class="far fa-square" style="color:black;" ></i></a>
+                {% endif %}
+                <a href="delete/{{ task.id }}" ><i class="fas fa-trash-alt" style="color:red;" ></i></a>
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+</html>
+```
+
+Por ultimo queda el archivo **index.php**
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require_once 'vendor/autoload.php';
+require_once 'Task.php';
+
+use Relay\Relay;
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'todo',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
+
+$loader = new Twig_Loader_Filesystem('.');
+$twig = new \Twig_Environment($loader, array(
+    'debug' => true,
+    'cache' => false,
+));
+
+$router = new Aura\Router\RouterContainer();
+$map = $router->getMap();
+$map->get('todo.list', '/crud/php-database-crud/', function ($request) use ($twig) {
+/*     $tasks = [
+        [
+            'id' => 1,
+            'description' => 'Aprender inglés',
+            'done' => false
+        ],
+        [
+            'id' => 1,
+            'description' => 'Hacer la tarea',
+            'done' => true
+        ],
+        [
+            'id' => 1,
+            'description' => 'Pasear al perro',
+            'done' => false
+        ],
+        [
+            'id' => 1,
+            'description' => 'Ver el curso de introducción a PHP',
+            'done' => false
+        ]
+    ]; */
+
+    $tasks = Task::all();
+    $response = new Zend\Diactoros\Response\HtmlResponse($twig->render('template.twig', [
+        'tasks' => $tasks
+    ]));
+    return $response;
+});
+
+$map->post('todo.add', '/crud/php-database-crud/add', function ($request) {
+        $data = $request->getParsedBody();
+        $task = new Task();
+        $task->description = $data['description'];
+        $task->save();
+        $response = new Zend\Diactoros\Response\RedirectResponse('/crud/php-database-crud/');
+        return $response;
+    });
+
+$map->get('todo.check', '/crud/php-database-crud/check/{id}', function ($request) {
+    $id = $request->getAttribute('id');
+    $task = Task::find($id);
+    $task-> done = true;
+    $task->save();
+    $response = new Zend\Diactoros\Response\RedirectResponse('/crud/php-database-crud/');
+    return $response;
+});
+
+$map->get('todo.uncheck', '/crud/php-database-crud/uncheck/{id}', function ($request) {
+    $id = $request->getAttribute('id');
+    $task = Task::find($id);
+    $task-> done = false;
+    $task->save();
+    $response = new Zend\Diactoros\Response\RedirectResponse('/crud/php-database-crud/');
+    return $response;
+});
+
+$map->get('todo.delete', '/crud/php-database-crud/delete/{id}', function ($request) {
+    $id = $request->getAttribute('id');
+    $task = Task::find($id);
+
+    $task->delete();
+    $response = new Zend\Diactoros\Response\RedirectResponse('/crud/php-database-crud/');
+    return $response;
+});
+
+$relay = new Relay([
+    new Middlewares\AuraRouter($router),
+    new Middlewares\RequestHandler()
+]);
+
+$response = $relay->handle($request);
+
+foreach ($response->getHeaders() as $name => $values) {
+    foreach ($values as $value) {
+        header(sprintf('%s: %s', $name, $value), false);
+    }
+}
+echo $response->getBody();
+```
+
+ya se puede guardar y conectar con la base de datos, crear, marcar como realizada una tarea o eliminarla
+
+![assets/89.png](assets/89.png)
+
+![assets/90.png](assets/90.png)
