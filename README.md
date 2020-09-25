@@ -3399,7 +3399,7 @@ php composer.phar require illuminate/database
 
 para instalar todas las dependencias.
 
-En PHP MyAdmin se debe crear otra base de datos que se llama **todo** y la tabla se va a llamar **task** que contiene 5 columnas que van a ser id, description, created_at, updated_at y done.
+En PHP MyAdmin se debe crear otra base de datos que se llama **todo** y la tabla se va a llamar **tasks** que contiene 5 columnas que van a ser id, description, created_at, updated_at y done.
 
 ![assets/86.png](assets/86.png)
 
