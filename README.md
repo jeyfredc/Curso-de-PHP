@@ -55,7 +55,7 @@ Curso de php realizado en Platzi
 
 [Clase 27 Formularios](#Clase-27-Formularios)
 
-[]()
+[Clase 28 Eloquent](#Clase-28-Eloquent)
 
 []()
 
@@ -3029,3 +3029,262 @@ var_dump($_POST);
 Recargar pagina
 
 ![assets/68.png](assets/68.png)
+
+## Clase 28 Eloquent
+
+En esta clase se va a conectar los formularios con la base de datos. Para crear una aplicacion dinamica, con almacenamiento persistente y poder trabajar en un servidor real.
+
+Para esto se va a usar una libreria que permita utilizar la capa de datos en PHP de una forma mas sencilla, utilizando una libreria de laravel, el cual es un framewoek popular de PHP.
+
+Vamos a trabajar con laravel Eloquent, el cual es un ORM que fue diseñado para usarlo en laravel.
+
+Abrir en el navegador Packagist(https://packagist.org/) es un sitio donde encontraras múltiples librerías de terceros que puedes integrar a tus proyectos mediante composer, de aquí añadiremos nuestra herramienta para la conexión a base de datos.
+
+El paquete que se va a utilizar se llama illuminate/database, el cual se puede encontrar en el buscador de la pagina, este paquete sirve para implementar un ORM que soporta MySQL, PostgreSQL, SQL Server y SQL lite, esto ayuda tambien si queremos cambiar el manejador de base de datos
+
+Para realizar la instalacion se copia `require illuminate/database`
+
+![assets/69.png](assets/69.png)
+
+Abrir la terminal y colocar para instalar
+
+```
+php composer.phar require illuminate/database
+```
+
+En caso de que salga algun error ejecutar la siguiente sentencia en la terminal
+
+```
+composer self-update --stable
+```
+
+En caso que tampoco salga nada ejecutar la siguiente sentencia en la terminal
+
+```
+sudo apt install composer
+
+```
+
+Despues de realizar la instalacion de composer ejecutar nuevamente esta sentencia en la terminal 
+
+```
+php composer.phar require illuminate/database
+```
+
+ir a la carpeta del curso y verificar que el archivo **composer.json** ya añadio illuminate/database
+
+![assets/70.png](assets/70.png)
+
+y tambien que se  creo un archivo llamado **composer.lock**
+
+El archivo **composer.json** guarda informacion sobre la version que estamos instalando de la libreria y **composer.lock** guarda informacion sobre las dependencias que esta tiene.
+
+Adicional a estos cambios la sub-carpeta **vendor** creo mas subcarpetas como **doctrine**, **illuminate**, **nesbot**, **psr**, **simfony**, **voku**
+
+**Nota:** Como practica comun, nunca se debe subir la carpeta **vendor** a los repositorios o guardar la carpeta **vendor**, lo que se hace es que siempre que alguien instale un proyecto nuevo va a utilizar el comando composer install y va a traer todos los datos.
+
+Se debe configurar el proyecto para conectar con la base de datos para eso se debe consultar la documentacion y ver los ejemplos que estan para agregar en el archivo **addJob.php**
+
+![assets/7.png](assets/71.png)
+
+toda la linea de codigo señalada es la que se va a copiar al archivo **addJob.php** y adicional se agrega la parte de `$capsule->setAsGlobal();`, esta permite hacer todo como si estuviera en el contexto global y `$capsule->bootEloquent();` sirve para inicializar el ORM, el codigo por el momento queda asi
+
+```
+<?php
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'database',
+    'username'  => 'root',
+    'password'  => 'password',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+var_dump($_GET);
+var_dump($_POST);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Job</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css"
+        integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Add Job</h1>
+    <form action="addJob.php" method="post" >
+        <label for="">Title:</label>
+        <input type="text" name="title"><br>
+        <label for="">Description:</label>
+        <input type="text" name="description"><br>
+        <button type="submit">Save</button>
+    </form>
+
+</body>
+
+</html>
+```
+
+Dentro de la carpeta **app** abrir el archivo **Job.php** y se va a realizar una modificacion para hacer la configuracion de la base de datos. esto tambien esta especificado en la documentacion donde nos indica que debemos utilizar el ORM de Eloquent
+
+![assets/72.png](assets/72.png)
+
+debemos hacer que la clase User extienda de la nueva clase `Illuminate\Database\Eloquent\Model`, la cual viene integrada con el ORM de Eloquent.
+
+tambien se va a quitar el metodo constructor y solo se deja la funcion `getDurationAsString()`
+
+Se puede ver mas documentacion en https://laravel.com/docs/8.x/eloquent y alli indica como usar la tabla para nuestro modelo
+
+![assets/73.png](assets/73.png)
+
+por tanto para agregarla utilizamos `protected $table = 'jobs';`, y tiene el nombrede 'jobs' porque fue la que creamos en PHP MyAdmin
+
+El archivo **Job.php**, queda asi 
+
+```
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Job extends Model{
+
+    protected $table = 'jobs';
+
+    public function getDurationAsString(){
+        $years = floor($this->months / 12);
+        $extraMonths = $this->months % 12;
+  
+        if($years == 0){
+          return "$extraMonths months";
+        }else{
+          return "Job duration: $years years $extraMonths months";
+        }
+      }
+}
+
+```
+
+Para poder usarlo el **addJob.php** debemos importarlo `use App\Models\Job;` y tambien crear una instancia de Job `$job = new Job();` y despues acceder a las variables para enviarlas con $_POST, por defecto la base de datos de XAMPP viene sin password y debemos cambiar el nombre de base de datos database por cursophp que asi es como se creo en PHP MyAdmin.
+
+como en todo los archivos hay que agregar `require_once 'vendor/autoload.php';`
+
+y para que exista conectividad con la base de datos debemos indicar que el campo index no se encuentra y se hace mediante un if statement.
+
+Significa que si no esta vacio ejecute el codigo pero si esta vacio no lo va a ejecutar `if(!empty($_POST))`, **!** es lo mismo que negar o decir que es falso
+
+```
+<?php
+
+require_once 'vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+use App\Models\Job;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+if(!empty($_POST)){
+    $job = new Job();
+    $job->title = $_POST['title'];
+    $job->description = $_POST['description'];
+    $job->save();
+}
+
+?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Job</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css"
+        integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Add Job</h1>
+    <form action="addJob.php" method="post" >
+        <label for="">Title:</label>
+        <input type="text" name="title"><br>
+        <label for="">Description:</label>
+        <input type="text" name="description"><br>
+        <button type="submit">Save</button>
+    </form>
+
+</body>
+
+</html>
+```
+
+Al recargar la pagina y pasar datos por Title y Description va a salir un error, esto se debe a que debemos añadir a la base de datos 2 campos mas llamados created_at y updated_at
+
+para añadir mas campos debemos ingresar a PHP My Admin, seleccionar la base datos
+
+![assets/74.png](assets/74.png)
+
+seleccionar jobs, ubicarse en la pestaña Structure y luego en donde dice Add seleccionar 2 y dar click en **Go**
+
+![assets/75.png](assets/75.png)
+
+luego escribir los nuevos campos y seleccionar ambos en DATETIME y guardar
+
+![assets/76.png](assets/76.png)
+
+si la pagina arroja el error 1364
+
+![assets/77.png](assets/77.png)
+
+Nuevamente regresar a la base de datos seleccionar visible y months, dar click en change 
+
+![assets/78.png](assets/78.png)
+
+y donde esta el campo Default seleccionar NULL, guardar los cambios para los dos y nuevamente recargar la pagina http://localhost/curso_php/addJob.php
+
+![assets/79.png](assets/79.png)
+
+Ahora devolverse a PHP My Admin y en la pestaña Browse verificar que los datos se hayan recibido 
+
+![assets/80.png](assets/80.png)

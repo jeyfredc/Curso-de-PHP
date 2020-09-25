@@ -27,9 +27,9 @@ $projects = [
   
   function printElement(Printable $job) {
   
-    if($job->visible == false){
+/*     if($job->visible == false){
       return;
-    }
+    } */
   
     echo '<li class="work-position">';
     echo '<h5>' . $job->getTitle() . '</h5>';  
