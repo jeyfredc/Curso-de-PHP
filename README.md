@@ -57,7 +57,7 @@ Curso de php realizado en Platzi
 
 [Clase 28 Eloquent](#Clase-28-Eloquent)
 
-[]()
+[Clase 29 Listar registros de la base de datos con Eloquent](#Clase-29-Listar-registros-de-la-base-de-datos-con-Eloquent)
 
 []()
 
@@ -3288,3 +3288,94 @@ y donde esta el campo Default seleccionar NULL, guardar los cambios para los dos
 Ahora devolverse a PHP My Admin y en la pestaña Browse verificar que los datos se hayan recibido 
 
 ![assets/80.png](assets/80.png)
+
+## Clase 29 Listar registros de la base de datos con Eloquent
+
+Una vez que ya tenemos lista la conexión y el formulario guarda la información, es momento de listar los datos que ingresamos a la base de datos en nuestra página principal. que esta en **index.php**, para eso se va modificar y agregar y quitar algunas cosas del codigo que ya se tenia en este archivo y en otros por ahora la parte de PHP que tiene **index.html** queda asi 
+
+```
+<?php
+
+require_once 'vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+use App\Models\Job;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+require_once 'jobs.php';
+
+$name = "Jeyfred Calderon";
+$limitMonths = 2000;
+
+?>
+```
+
+En el archivo **jobs.php** tambien vamos a quitar los array que existian para cargar cada uno de los trabajos y tambien la extension de la interfaz **Printable**, porque en este archivo se quiere traer la informacion de la base de datos y se hace con la siguiente sentencia `$jobs = Job::all();`,la cual es un metodo de acceso que  trae todos los registros que encuentre en la  tabla jobs, el codigo modificado queda asi 
+
+```
+<?php
+
+require_once 'vendor/autoload.php';
+
+use App\Models\{Job, Project};
+
+$jobs = Job::all();
+
+
+$project1 = new Project('Project 1', 'Description 1');
+$projects = [
+    $project1,
+];
+  
+  function printElement($job) {
+    
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->title . '</h5>';  
+    echo '<p>' . $job->description. '</p>';
+    echo '<p>' . $job->getDurationAsString() . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+```
+
+Despues de modificar los codigos regresar a la pagina index http://localhost/curso_php/ que fue la ruta del proyecto inicialmente y verificar que ya aparezcan los datos cargados como se ingresaron a la base datos
+
+![assets/81.png](assets/81.png)
+
+Si se quieren cargar mas datos regresar o abrir una pestaña nueva para agregar mas informacion http://localhost/curso_php/addJob.php? 
+
+![assets/82.png](assets/82.png)
+
+Verificar que tambien se guarde en base de datos
+
+![assets/83.png](assets/83.png)
+
+y ahora verificar en la principal que esto tambien se haya cargado
+
+![assets/84.png](assets/84.png)
+
+**RETO:** Realiza la página para añadir projects, el modelo para que guarde la información y después muestra la información en la página principal.
+
