@@ -65,7 +65,7 @@ Curso de php realizado en Platzi
 
 [Clase 32 PSR7](#Clase-32-PSR7)
 
-[]()
+[Clase 33 Router](#Clase-33-Router)
 
 []()
 
@@ -4115,4 +4115,155 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.php [QSA,L]
 ```
 
-ahora si guardamos y recargamos a jobs http://localhost/curso_php/jobs , nos va a aparecer ña ruta gracias al var_dump configurado 
+ahora si guardamos y recargamos a jobs http://localhost/curso_php/jobs , nos va a aparecer la ruta gracias al var_dump configurado 
+
+![assets/98.png](assets/98.png)
+
+## Clase 33 Router
+
+aura/router es un paquete que nos ayudará para manejar las rutas en nuestro proyecto.
+
+y lo que se va a buscar es un router compatible con PSR7
+
+Aquí puedes encontrar el paquete: https://packagist.org/packages/aura/router
+
+Lo primero que se debe hacer es agregar `aura/router` entonces a continuacion en la terminal colocamos
+
+```
+php composer.phar require aura/router
+```
+
+Despues de realizar la instalacion, revisamos la documentacion: https://github.com/auraphp/Aura.Router/blob/HEAD/docs/index.md empezando por **Getting Started** que indica que tenemos que crear un contenedor de rutas 
+
+```
+<?php
+use Aura\Router\RouterContainer;
+
+$routerContainer = new RouterContainer();
+?>
+```
+
+despues obtener un mapa de rutas 
+
+```
+<?php
+$map = $routerContainer->getMap();
+?>
+```
+
+y despues agregar cosas a esas rutas 
+
+```
+<?php
+$map->get('blog.read', '/blog/{id}', function ($request, $response) {
+    $id = (int) $request->getAttribute('id');
+    $response->getBody()->write("You asked for blog entry {$id}.");
+    return $response;
+});
+?>
+```
+
+Cuando terminamos vamos a obtener un Matcher que es la parte que indica si existe o no una ruta 
+
+```
+<?php
+$matcher = $routerContainer->getMatcher();
+?>
+```
+
+y luego se hace un match hacia la ruta 
+
+```
+<?php
+/**
+ * @var Psr\Http\Message\ServerRequestInterface $request
+ */
+$route = $matcher->match($request);
+?>
+```
+
+Para ir implementado en el codigo se modifica **index.php** de Public
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once '../vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Aura\Router\RouterContainer;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
+
+$routerContainer = new RouterContainer();
+
+$map = $routerContainer->getMap();
+
+$map->get('index', '/curso_php/', '../index.php');
+
+$map->get('addJobs', '/curso_php/jobs/add', '../addJob.php');
+
+$matcher = $routerContainer->getMatcher();
+
+$route = $matcher->match($request);
+
+if(!$route){
+    echo 'No route';
+}
+
+var_dump($route->handler);
+```
+
+Al recargar el navegador si se pone esta ruta http://localhost/curso_php/ va a indicar donde esta haciendo el handler 
+
+![assets/99.png](assets/99.png)
+
+Si se coloca esta ruta http://localhost/curso_php/jobs/add 
+
+![assets/100.png](assets/100.png)
+
+Y si se pone una ruta mal definida debe indicar que no hay ruta porque asi quedo configurado
+
+![assets/101.png](assets/101.png)
+
+y ahora si en el codigo en el if statement se agrega el else con require para que obtenga la ruta nuevamente van a aparecer las paginas como se tenian configuradas
+
+```
+if(!$route){
+    echo 'No route';
+} else{
+    require $route->handler;
+}
+```
+
+![assets/102.png](assets/102.png)
+
+![assets/103.png](assets/103.png)
