@@ -61,7 +61,7 @@ Curso de php realizado en Platzi
 
 [Clase 30 Insertar datos en MySql con PHP](#Clase-30-Insertar-datos-en-MySql-con-PHP)
 
-[]()
+[Clase 31 Front Controller](#Clase-31-Front-Controller)
 
 []()
 
@@ -3775,3 +3775,216 @@ ya se puede guardar y conectar con la base de datos, crear, marcar como realizad
 ![assets/89.png](assets/89.png)
 
 ![assets/90.png](assets/90.png)
+
+## Clase 31 Front Controller
+
+Continuando con el proyecto del portafolio, nos vamos dando cuenta que el codigo se empieza a duplicar o a repetir una y otra vez.
+
+Hasta el momento estamos teniendo diferentes tipos de acceso a la aplicacion, donde estamos haciendo uso de index con el autoload, inicializando conexion a la base de datos e inicializando Eloquent; Tambien se esta haciendo uso de un formulario que tiene las mismas caracteristicas que **index**.
+
+Si se requiere hacer otra pagina HTML con estas caracteristicas sera necesario copiar el codigo, duplicarlo y adaptarlo para que se pueda enlazar o conectar de la misma forma que las otras paginas HTML.
+
+Front Controller es un patrón de diseño que nos dará una solución a la redundancia del código en las múltiples entradas a la aplicación. Este tendrá el control de todas las entradas además de las inicializaciones de base de datos etc.
+
+A continuacion dentro de la carpeta **curso_php**, crear una subcarpeta llamada **public** y dentro de esta carpeta crear un archivo llamado **index.php** que es el que va a funcionar como Front Controller, cuando se quiere hacer un deploy a producción, no queremos que las personas tengan acceso a los demas archivos, para esto es que existe la carpeta **public**, que es donde vamos a exponer a los usuarios y los demas archivos creados para la aplicacion van a quedar ocultos.
+
+Lo que hay que hacer es inicializar PHP y a continuacion queremos como ejemplo inicializar errore en PHP, la forma de hacerlo es con el metodo `ini_set();` que lo que hace es inicializar variables de PHP, el 1 se usa para indicar que esta activado `ini_set('display_errors', 1);` y la constante `E_ALL`, es para indicar a PHP que detecte todos los errores. Normalmente XAMPP viene con el sistema de errores activo, en otras ocasiones se puede llegar a trabajar con servidores que no lo tengan activo y esta es la forma de poder habilitar y ver la salida de los errores. Esto solo se usa mientras se este trabajando en modo Development o desarrollo, cuando se hace un deploy a produccion ya no queremos que salgan este tipo de errores a los usuarios.
+
+Posterior se trae el `require_once 'vendor/autoload.php';`, despues toda la parte del Eloquent 
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once 'vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+```
+
+Tambien al hacer esto hay que quitar varias cosas del index.php de la carpeta **curso_php**, es decir el que estabamos cargando anteriormente, la parte que esta con codigo de PHP solo queda con esto 
+
+```
+<?php
+
+use App\Models\Job;
+use App\Models\Project;
+require_once 'jobs.php';
+
+$name = "Jeyfred Calderon";
+$limitMonths = 2000;
+?>
+```
+
+y en el index de la carpeta public se quiere traer la informacion que estaba en nuestro antiguo index para eso se hace un `require '../index.php';`, se guarda y luego se recarga el navegador 
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once 'vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+require '../index.php';
+```
+
+pero la ruta para cargar este archivo, esta vez accedemos a traves de **public** con la siguiente ruta en el navegador http://localhost/curso_php/public/
+
+![assets/91.png](assets/91.png)
+
+Esto era un ejemplo para demostrar como accediamos a la pagina principal, pero ahora para obtener las demas rutas, es decir la del formulario vamos a establecer una variable `$route` que va a obtener un `$_GET['route]`, el operador `??`, quiere decir que si esta definido y tiene un valor y si no pone lo que sigue `$route = $_GET['route] ?? '/;`, entonces a continuacion viene la sentencia para establecer las rutas, el codigo de **index.php** en la carpeta public queda asi.
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once '../vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+$route = $_GET['route'] ?? '/';
+
+if($route == '/'){
+    require '../index.php';
+}elseif ($route == 'addJob') {
+    require '../addJob.php';
+}
+```
+
+asi como se quitaron varias sentencias en **index.php** principal tambien se debe quitar **addJob.php** que se encuentra en la carpeta **vendor**, el archivo addJob queda asi 
+
+```
+<?php
+
+require_once 'vendor/autoload.php';
+
+use App\Models\Job;
+use App\Models\Project;
+
+if(!empty($_POST)){
+    $job = new Job();
+    $job->title = $_POST['title'];
+    $job->description = $_POST['description'];
+    $job->save();
+}
+
+if(!empty($_POST)){
+    $job = new Project();
+    $job->title = $_POST['title'];
+    $job->description = $_POST['description'];
+    $job->save();
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Job</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css"
+        integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Add Job</h1>
+    <form action="addJob.php" method="post" >
+        <label for="">Title:</label>
+        <input type="text" name="title"><br>
+        <label for="">Description:</label>
+        <input type="text" name="description"><br>
+        <button type="submit">Save</button>
+    </form>
+<br>
+
+    <h1>Add Project</h1>
+    <form action="addJob.php" method="post" >
+        <label for="">Title:</label>
+        <input type="text" name="title"><br>
+        <label for="">Description:</label>
+        <input type="text" name="description"><br>
+        <button type="submit">Save</button>
+    </form>
+
+</body>
+
+</html>
+```
+
+Ahora la forma de ingresar a los formularios sera con la siguiente ruta en el navegador http://localhost/curso_php/public/?route=addJob se agrega el signo ? con la variable y el archivo
+
+![assets/92.png](assets/92.png)
+
+Si no se pone la ruta como se hizo anteriormente lo que va a hacer el navegador es enviar hacia la pagina principal http://localhost/curso_php/public/
+
+![assets/91.png](assets/91.png)
