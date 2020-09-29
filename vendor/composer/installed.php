@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '64d4bae80c843ae640b7d692cc045d8863a719ac',
+    'reference' => 'f893fa8a354e919943682a92a670be8964fe4044',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '64d4bae80c843ae640b7d692cc045d8863a719ac',
+      'reference' => 'f893fa8a354e919943682a92a670be8964fe4044',
     ),
     'doctrine/inflector' => 
     array (
@@ -102,6 +102,38 @@
       'reference' => 'b7ce3b176482dbbc1245ebf52b181af44c2cf55f',
     ),
     'psr/container-implementation' => 
+    array (
+      'provided' => 
+      array (
+        0 => '1.0',
+      ),
+    ),
+    'psr/http-factory' => 
+    array (
+      'pretty_version' => '1.0.1',
+      'version' => '1.0.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '12ac7fcd07e5b077433f5f2bee95b3a771bf61be',
+    ),
+    'psr/http-factory-implementation' => 
+    array (
+      'provided' => 
+      array (
+        0 => '1.0',
+      ),
+    ),
+    'psr/http-message' => 
+    array (
+      'pretty_version' => '1.0.1',
+      'version' => '1.0.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'f6561bf28d520154e4b0ec72be95418abe6d9363',
+    ),
+    'psr/http-message-implementation' => 
     array (
       'provided' => 
       array (
@@ -238,6 +270,15 @@
       array (
       ),
       'reference' => '25bcbf01678930251fd572891447d9e318a6e2b8',
+    ),
+    'zendframework/zend-diactoros' => 
+    array (
+      'pretty_version' => '2.2.1',
+      'version' => '2.2.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'de5847b068362a88684a55b0dbb40d85986cfa52',
     ),
   ),
 );

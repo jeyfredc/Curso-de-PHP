@@ -63,7 +63,7 @@ Curso de php realizado en Platzi
 
 [Clase 31 Front Controller](#Clase-31-Front-Controller)
 
-[]()
+[Clase 32 PSR7](#Clase-32-PSR7)
 
 []()
 
@@ -3988,3 +3988,131 @@ Ahora la forma de ingresar a los formularios sera con la siguiente ruta en el na
 Si no se pone la ruta como se hizo anteriormente lo que va a hacer el navegador es enviar hacia la pagina principal http://localhost/curso_php/public/
 
 ![assets/91.png](assets/91.png)
+
+## Clase 32 PSR7
+
+El Front Controller sera el encargado de inicializar y cargar todo lo que se requiera en la aplicacio.
+
+Lo que sigue a continuacion de esto es poder mejorar el mini router establecido en la clase anterior.
+
+Antes de empezar a trabajar con router es que es recomendable empezar a ver como trabajar con PSR7.
+
+PSR7 es un estandar que nos permite normalizar un request y un response en PHP.
+
+En este enlace encontrarás la documentación de PSR7: https://www.php-fig.org/psr/psr-7/
+
+PSR7 lo que hace es brindar una interfaz para mensaje de HTTP. Esta interfaz lo que realmente va a hacer es poder implementar interfaces en las clases. lo que hace es asegurar que el objeto request va a funcionar con una clase o con otra y tambien lo puede trabajar con librerias.
+
+Para poder hacer esto es necesario traer otra libreria llamada zendframework el cual trae a PSR HTTP Message implementations 
+
+A continuacion como lo hicimos con illuminate, abrimos la terminal y ejecutamos la siguiente linea de codigo en la ubicacion de la carpeta del curso 
+
+```
+php composer.phar require zendframework/zend-diactoros
+```
+
+![assets/93.png](assets/93.png)
+
+Aquí encontrarás cómo implementarlo: https://zendframework.github.io/zend-diactoros/usage/ y aqui el enlace para hacer la descarga.
+
+En este caso se consulta la documentacion y se implementa la parte de request en index public 
+
+![assets/94.png](assets/94.png)
+
+Ahora en lugar de utilizar esta ruta en index public
+
+```
+$route = $_GET['route'] ?? '/';
+
+if($route == '/'){
+    require '../index.php';
+}elseif ($route == 'addJob') {
+    require '../addJob.php';
+}
+```
+Lo que vamos a hacer es utilizar la ruta que realmente nos va a regresar el request que se esta creando con Zend-diactoros.
+
+Lo primero que se hace en index public es crear un `var_dump`, para ver que esta pasando con el objeto nuevo y vamos a utilizar `var_dump($request->getUri()->getPath());`
+
+**index.php** Public
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once '../vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
+
+var_dump($request->getUri()->getPath());
+```
+
+Al momento de recargar en navegador con la ruta http://localhost/curso_php/public/, el navegador va a obtener directamente la ruta que se esta utilizando
+
+![assets/95.png](assets/95.png)
+
+el request automaticamente esta dectectando todas las cosas que se estan utilizando a partir del server, GET, POST e incluso Cookies y files que son otras super globales que se van a utilizar mas adelante.
+
+Ahora lo que se quiere es evitar entrar a rutas en el navegador como se han venido utilizando para  eso se va a utilizar el motor de redireccionamiento de apache para poder trabajar de una forma mas dinamica.
+
+Dentro de la carpeta **curso_php** , crear un archivo llamado **.htaccess**, el cual es un archivo de configuracion de apache que permite hacer cosas con el redireccionamiento o comprimir lo que enviamos hacia los clientes.
+
+Dentro de este archivo habilitamos el motor de `RewriteEngine On` y luego vienen las condiciones `Rewritecond %{THE_REQUEST} /public`, a continuacion viene una expresion regular `([^\s?]*) [NC]`, la expresion regular lo que dice es que si ya estamos dentro de la carpeta public con algo entonces ya no queremos que haga redireccionamiento, es para evitar meter en ciclos de redireccionamiento, tabmien se añade la siguiente sentencia `RewriteRule ^ % 1[L,NE,R=302]` que lo que quiere decir es que cuando encuentre el request queremos que nos mande como una redireccion 302 hacia public y por ultimo otra regla que dice que cuando encuentre cualquier cosa la mande directamente a public.
+
+Si se esta usando un editor de texto como VisualCode en la pestaña de Extensiones se puede buscar e instalar **Apache Conf**
+
+![assets/97.png](assets/97.png)
+
+**.htaccess**
+
+```
+RewriteEngine On
+RewriteCond %{THE_REQUEST} /public/([^\s?]*) [NC]
+RewriteRule ^ %1[L,NE,R=302]
+RewriteRule ^((?!public/).*)$ /curso_php/public/$1 [L,NC]
+```
+
+Al regresar directamente a http://localhost/curso_php/ va a aparecer la ruta en donde esta alojada la aplicacion 
+
+![assets/96.png](assets/96.png)
+
+Ahora dentro de la carpeta **public**, vamos a agregar una nueva redireccion creando otro archivo dentro de esta que tambien se llame **.htaccess**, en la que colocamos `RewriteEngine On` para inicializar el motor, se agrega otra condicion `RewriteCond %{REQUEST_FILENAME} !-d` , quiere decir que si el archivo que estamos solicitando REQUEST_FILENAME no es (!) un directorio (-d), entonces seguimos probando y la siguiente condicion significa si no es un archivo `RewriteCond %{REQUEST_FILENAME} !-f` y a continuacion una regla donde especifica que si no es un directorio y tampoco es  un archivo entonces todo se va a mandar a index.php y se le pasan dos modificadores que son [QSA,L], `QSA` lo que hace es que todo lo que mandemos se agregue al Query String Append y la `L`, signigica que es la ultima es decir que si se hace lo anterior no se va a redireccionar mas
+
+```
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]
+```
+
+ahora si guardamos y recargamos a jobs http://localhost/curso_php/jobs , nos va a aparecer ña ruta gracias al var_dump configurado 
