@@ -2,21 +2,25 @@
 
 namespace App\Controllers;
 
-use Aoo\Models\Job;
+use App\Models\Job;
+use App\Models\Project;
 
 class JobsController {
-    public function getAddJobAction(){
-        if(!empty($_POST)){
+    public function getAddJobAction($request){
+
+        if($request->getMethod() == 'POST'){
+            $postData = $request->getParsedBody();
             $job = new Job();
-            $job->title = $_POST['title'];
-            $job->description = $_POST['description'];
+            $job->title = $postData['title'];
+            $job->description = $postData['description'];
             $job->save();
         }
         
-        if(!empty($_POST)){
+        if($request->getMethod() == 'POST'){
+            $postData = $request->getParsedBody();
             $job = new Project();
-            $job->title = $_POST['title'];
-            $job->description = $_POST['description'];
+            $job->title = $postData['title'];
+            $job->description = $postData['description'];
             $job->save();
         }
 

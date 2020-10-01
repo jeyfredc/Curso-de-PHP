@@ -31,7 +31,7 @@ class Project extends Model{
       if($years == 0){
         return "$extraMonths months";
       }else{
-        return "Job duration: $years years $extraMonths months";
+        return "Project duration: $years years $extraMonths months";
       }
     }
 }

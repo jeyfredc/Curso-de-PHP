@@ -71,7 +71,7 @@ Curso de php realizado en Platzi
 
 [Clase 35 MVC Reestructurando Vistas y Controladores](#Clase-35-MVC-Reestructurando-Vistas-y-Controladores)
 
-[]()
+[Clase 36 MVC Controller de la entidad Job](#Clase-36-MVC-Controller-de-la-entidad-Job)
 
 []()
 
@@ -4649,7 +4649,8 @@ Continuando con **JobsController.php** se debe incluir la vista
 
 namespace App\Controllers;
 
-use Aoo\Models\Job;
+use App\Models\Job;
+use App\Models\Project;
 
 class JobsController {
     public function getAddJobAction(){
@@ -4675,3 +4676,395 @@ class JobsController {
 Nuevamente al recargar con la ruta debe aparecer la vista de addJobs
 
 ![assets/103.png](assets/103.png)
+
+## Clase 36 MVC Controller de la entidad Job
+
+Cuando enviamos parámetros en POST no lo hacemos en la url sino que lo hacemos dentro del cuerpo de código.
+
+Hace falta terminar uan parte del controlador que tiene que ver con el envio de informacion hacia la base de datos.
+
+Actualmente en la aplicacion al agregar algun campo en Add Job o Add Project, nos redirecciona e indica que no existe ruta y adicionalmente nos esta enviando a la vista de addJob y esta ya no tiene algunda funcionalidad mas que el codigo HTML que existe
+
+![assets/108.png](assets/108.png)
+
+![assets/109.png](assets/109.png)
+
+Dentro del archivo **addJob.php** se debe modificar la ruta de redireccionamente a **/jobs/add**
+
+```
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Job</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css"
+        integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Add Job</h1>
+    <form action="/curso_php/jobs/add" method="post" >
+        <label for="">Title:</label>
+        <input type="text" name="title"><br>
+        <label for="">Description:</label>
+        <input type="text" name="description"><br>
+        <button type="submit">Save</button>
+    </form>
+<br>
+
+    <h1>Add Project</h1>
+    <form action="/curso_php/jobs/add" method="post" >
+        <label for="">Title:</label>
+        <input type="text" name="title"><br>
+        <label for="">Description:</label>
+        <input type="text" name="description"><br>
+        <button type="submit">Save</button>
+    </form>
+
+</body>
+
+</html>
+```
+
+Ahora hay que configurar el controlador **JobsController.php** , ahora dentro del metodo getAddJobAction se va a comentar todo para ver un ejemplo de lo que esta pasando con un `var_dump`, nuevamente el navegador nos va a mostrar un array vacio
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\Job;
+use App\Models\Project;
+
+class JobsController {
+    public function getAddJobAction(){
+
+        var_dump($_POST);
+/*         if(!empty($_POST)){
+            $job = new Job();
+            $job->title = $_POST['title'];
+            $job->description = $_POST['description'];
+            $job->save();
+        }
+        
+        if(!empty($_POST)){
+            $job = new Project();
+            $job->title = $_POST['title'];
+            $job->description = $_POST['description'];
+            $job->save();
+        } */
+
+        include '../Views/addJob.php';
+    }
+}
+```
+![assets/110.png](assets/110.png)
+
+y en **index.php** de Public se debe enviar un metodo post
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once '../vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Aura\Router\RouterContainer;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
+
+$routerContainer = new RouterContainer();
+
+$map = $routerContainer->getMap();
+
+$map->get('index', '/curso_php/', [
+    'controller' => 'App\Controllers\IndexController',
+    'action' => 'indexAction']);
+
+$map->get('addJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction']);
+
+$map->post('saveJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction']);
+
+$matcher = $routerContainer->getMatcher();
+
+$route = $matcher->match($request);
+
+function printElement($job) {
+    
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->title . '</h5>';  
+    echo '<p>' . $job->description. '</p>';
+    echo '<p>' . $job->getDurationAsString() . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+
+if(!$route){
+    echo 'No route';
+} else{
+    $handlerData = $route->handler; 
+    $controllerName = $handlerData['controller'];
+    $actionName = $handlerData['action'];
+
+    $controller = new $controllerName;
+    $controller->$actionName();
+}
+```
+
+Despues de configurar a post al recargar el navegador el navegador va a mostrar los parametros que estamos recibiendo en el formulario
+
+![assets/111.png](assets/111.png)
+
+![assets/112.png](assets/112.png)
+
+Ahora en los parametro de la funcion `getAddJobAction` se debe pasar el `$request` luego utilizamos el metodo de PSR7 `getMethod` para que este nos devuelva el metodo que estamos utilizando con el request
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\Job;
+use App\Models\Project;
+
+class JobsController {
+    public function getAddJobAction($request){
+
+        var_dump($request->getMethod());
+/*         if(!empty($_POST)){
+            $job = new Job();
+            $job->title = $_POST['title'];
+            $job->description = $_POST['description'];
+            $job->save();
+        }
+        
+        if(!empty($_POST)){
+            $job = new Project();
+            $job->title = $_POST['title'];
+            $job->description = $_POST['description'];
+            $job->save();
+        } */
+
+        include '../Views/addJob.php';
+    }
+}
+```
+
+Y cuando se re envia el formulario en la pagina nos aparece el metodo que se esta utilizando el cual es POST
+
+el request tambien se debe pasar por **index.php** public en la instancia del controlador de actionName como parametro 
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once '../vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Aura\Router\RouterContainer;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
+
+$routerContainer = new RouterContainer();
+
+$map = $routerContainer->getMap();
+
+$map->get('index', '/curso_php/', [
+    'controller' => 'App\Controllers\IndexController',
+    'action' => 'indexAction']);
+
+$map->get('addJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction']);
+
+$map->post('saveJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction']);
+
+$matcher = $routerContainer->getMatcher();
+
+$route = $matcher->match($request);
+
+function printElement($job) {
+    
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->title . '</h5>';  
+    echo '<p>' . $job->description. '</p>';
+    echo '<p>' . $job->getDurationAsString() . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+
+if(!$route){
+    echo 'No route';
+} else{
+    $handlerData = $route->handler; 
+    $controllerName = $handlerData['controller'];
+    $actionName = $handlerData['action'];
+
+    $controller = new $controllerName;
+    $controller->$actionName($request);
+}
+```
+
+![assets/113.png](assets/113.png)
+
+Existen otros metodos de PSR7 que se pueden consultar en la documentacion a continuacion dentro del archivo **JobsController.php** se va a establecer el metodo `getBody` y tambien `getParsedBody` mediante `var_dump` 
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\Job;
+use App\Models\Project;
+
+class JobsController {
+    public function getAddJobAction($request){
+
+        var_dump($request->getBody());
+        var_dump($request->getParsedBody());
+/*         if(!empty($_POST)){
+            $job = new Job();
+            $job->title = $_POST['title'];
+            $job->description = $_POST['description'];
+            $job->save();
+        }
+        
+        if(!empty($_POST)){
+            $job = new Project();
+            $job->title = $_POST['title'];
+            $job->description = $_POST['description'];
+            $job->save();
+        } */
+
+        include '../Views/addJob.php';
+    }
+}
+```
+
+El primer metodo resaltado en el cuadro amarillo nos trae un objeto tipo PhpInputStream y el segundo metodo resaltado en el cuadro rojo trae un array de tipo asociativo
+
+![assets/114.png](assets/114.png)
+
+y ahora si se hace un casteo de string al metodo getBody va a traer la cadena original del PhpInputStream, cuando se envia un parametro por POST, es el mismo formato que se envia en parametro por GET, sin embargo en lugar de que sea enviado dentro de la URL, es enviado dentro del cuerpo del mensaje.
+
+Entonces nuevamente lo que se resalta en amarillo es el metodo `getBody` y lo que esta en rojo es el metodo `getParsedBody`
+
+![assets/115.png](assets/115.png)
+
+y ahora en el mismo archivo se activa nuevamente lo que estaba comentado y se indica que si al hacer request el metodo es igual a post, se pasa una nueva variable llamada `$posData` para que haga el request del array asociativo y lleve los datos a la base de datos
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\Job;
+use App\Models\Project;
+
+class JobsController {
+    public function getAddJobAction($request){
+        if($request->getMethod() == 'POST'){
+            $postData = $request->getParsedBody();
+            $job = new Job();
+            $job->title = $postData['title'];
+            $job->description = $postData['description'];
+            $job->save();
+        }
+        
+        if($request->getMethod() == 'POST'){
+            $postData = $request->getParsedBody();
+            $job = new Project();
+            $job->title = $postData['title'];
+            $job->description = $postData['description'];
+            $job->save();
+        }
+
+        include '../Views/addJob.php';
+    }
+}
+```
+![assets/116.png](assets/116.png)
+
+Al verificar la base de datos ya debe aparecer la informacion que estamos enviando 
+
+![assets/117.png](assets/117.png)
+
+y ahora si revisamos en index tambien debe aparecer este registro
+
+![assets/118.png](assets/118.png)
