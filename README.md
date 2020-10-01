@@ -67,7 +67,7 @@ Curso de php realizado en Platzi
 
 [Clase 33 Router](#Clase-33-Router)
 
-[]()
+[Clase 34 MVC, Creando Controllers](#Clase-34-MVC-Creando-Controllers)
 
 []()
 
@@ -4267,3 +4267,121 @@ if(!$route){
 ![assets/102.png](assets/102.png)
 
 ![assets/103.png](assets/103.png)
+
+## Clase 34 MVC, Creando Controllers
+
+Ya tenemos un router, un Front Controller y un request que es PSR7.
+
+
+MVC es un patrón de diseño que divide nuestra aplicación en tres partes fundamentales:
+
+
+- **Model** -> Modelo(Son toda la parte que controla datos en la aplicacion)
+
+- **View**-> Vistas
+
+- **Controller** -> controladores(Es la parte que recibe los request, busca con los modelos tratar de dar una respuesta a los request y envia un mensaje hacia la vista para que despliegue una respuesta)
+
+Organizaremos nuestro proyecto en carpetas con estos nombres.
+
+Dentro de la carpeta **curso_php**, creamos una subcarpeta llamada **Views** en donde aca solamente vamos a almacenar vistas
+
+En la carpeta de **app** ya habiamos creado la subcarpeta **Models** y ahora hay que crear otra carpeta dentro de **app** que se llame **Controllers**, dentro de esta carpeta vamos a crear un namespace en un archivo llamado **IndexController.php**.
+
+Se debe inicializar php, luego de crear el namespace `namespace App\Controllers;`.
+
+Luego se crea una clase llamada `class IndexController {}`. Normalmente a cada cosa que se hace dentro de un Controller se llama a una accion.
+
+Dentro de este controlador vamos a implementar metodos que se dediquen solo a la parte de Jobs, es recomendable usar controladores para acciones en especifico de cada archivo para que sea mas facil de mantener.
+
+El metodo que se va a crear dentro del controlador se va a llamar `indexAction()` el cual va a tener un mensaje que despues de configurar como prueba tiene que lanzar ese `echo` al navegador
+
+**IndexController.php**
+
+```
+<?php
+
+<?php
+
+namespace App\Controllers;
+
+class IndexController {
+    public function indexAction(){
+
+        echo 'indexAction';
+    }
+}
+```
+dentro del mapa de rutas de **index.php** Public, se establece la ruta hacia el controlador mediante un array `'controller' => 'App\Controllers\IndexController',` y luego se establece la accion del controlador `'action' => 'indexAction'`.
+
+posterior en las llaves del `else` se crea una variable auxiliar llamada `$handlerData` que va a tener la ruta del handler y otra variable `$controller` que va a ser una nueva instancia de `IndexController` y es posible darle el comportamiento de clase 
+
+**index.php** Public
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once '../vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Aura\Router\RouterContainer;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
+
+$routerContainer = new RouterContainer();
+
+$map = $routerContainer->getMap();
+
+$map->get('index', '/curso_php/', [
+    'controller' => 'App\Controllers\IndexController',
+    'action' => 'indexAction']);
+
+$map->get('addJobs', '/curso_php/jobs/add', '../addJob.php');
+
+$matcher = $routerContainer->getMatcher();
+
+$route = $matcher->match($request);
+
+if(!$route){
+    echo 'No route';
+} else{
+    $handlerData = $route->handler; 
+    $controllerName = $handlerData['controller'];
+    $actionName = $handlerData['action'];
+
+    $controller = new $controllerName;
+    $controller->$actionName();
+}
+```
+Al guardar y recargar el navegador debe aparecer el `echo` que se estaba configurando desde `IndexController` en la ruta http://localhost/curso_php/
+
+![assets/104.png](assets/104.png)
