@@ -4,10 +4,6 @@ require_once 'vendor/autoload.php';
 
 use App\Models\{Job, Project};
 
-$jobs = Job::all();
-$projects = Project::all();
-
-  
   function printElement($job) {
     
     echo '<li class="work-position">';

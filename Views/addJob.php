@@ -1,26 +1,3 @@
-<?php
-
-require_once 'vendor/autoload.php';
-
-use App\Models\Job;
-use App\Models\Project;
-
-if(!empty($_POST)){
-    $job = new Job();
-    $job->title = $_POST['title'];
-    $job->description = $_POST['description'];
-    $job->save();
-}
-
-if(!empty($_POST)){
-    $job = new Project();
-    $job->title = $_POST['title'];
-    $job->description = $_POST['description'];
-    $job->save();
-}
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 

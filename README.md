@@ -69,7 +69,7 @@ Curso de php realizado en Platzi
 
 [Clase 34 MVC, Creando Controllers](#Clase-34-MVC-Creando-Controllers)
 
-[]()
+[Clase 35 MVC Reestructurando Vistas y Controladores](#Clase-35-MVC-Reestructurando-Vistas-y-Controladores)
 
 []()
 
@@ -4385,3 +4385,293 @@ if(!$route){
 Al guardar y recargar el navegador debe aparecer el `echo` que se estaba configurando desde `IndexController` en la ruta http://localhost/curso_php/
 
 ![assets/104.png](assets/104.png)
+
+## Clase 35 MVC Reestructurando Vistas y Controladores
+
+Ahora se van a reestructura el codigo y carpetas y en este caso el **index.php** de la ruta **/opt/lampp/htdocs/curso_php/index.php**, ahora se va a trasladar para views es decir se corta y se pega a la ruta **lampp/htdocs/curso_php/views** y ahora el codigo de php que estaba dentro de index pasa al controlador 
+
+![assets/105.png](assets/105.png)
+
+tambien toda la parte que se encontraba en jobs **/opt/lampp/htdocs/curso_php/jobs.php**, se pasa al controlador
+
+![assets/106.png](assets/106.png)
+
+Luego en **IndexController.php** lo que se hace es incluir la vista `include'../Views/index.php';`
+
+**IndexController.php**
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\{Job, Project};
+
+class IndexController {
+    public function indexAction(){
+        
+        $jobs = Job::all();
+        $projects = Project::all();
+
+        $name = "Jeyfred Calderon";
+        $limitMonths = 2000;
+
+        include '../Views/index.php';
+
+    }
+}
+```
+Al recargar el navegador funciona nuevamente la vista pero no obtiene la funcion `printElment`
+
+![assets/44.png](assets/44.png)
+
+para que funcione `printElement` debemos traer la funcion y pasar a **index.php** Public
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once '../vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Aura\Router\RouterContainer;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
+
+$routerContainer = new RouterContainer();
+
+$map = $routerContainer->getMap();
+
+$map->get('index', '/curso_php/', [
+    'controller' => 'App\Controllers\IndexController',
+    'action' => 'indexAction']);
+
+$map->get('addJobs', '/curso_php/jobs/add', '../addJob.php');
+
+$matcher = $routerContainer->getMatcher();
+
+$route = $matcher->match($request);
+
+function printElement($job) {
+    
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->title . '</h5>';  
+    echo '<p>' . $job->description. '</p>';
+    echo '<p>' . $job->getDurationAsString() . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+
+if(!$route){
+    echo 'No route';
+} else{
+    $handlerData = $route->handler; 
+    $controllerName = $handlerData['controller'];
+    $actionName = $handlerData['action'];
+
+    $controller = new $controllerName;
+    $controller->$actionName();
+}
+```
+
+Si se recarga el navegador nuevamente va a aparecer la vista como siempre se ha obtenido 
+
+![assets/45.png](assets/45.png)
+
+Ahora lo que se va a realziar es crear el controlador para que tenga comunicacion con el formulario y la base de datos por tanto dentro de la carpeta **Controllers**, se va añadir un nuevo controlador que se va a llamar **JobsController.php** la cual va a tener una clase que se llama `JobsController` y luego se crea la funcion que va a tener una accion que es la que va a agregar el Job, por el momento se coloca un echo de prueba
+
+```
+<?php
+
+namespace App\Controllers;
+
+class JobsController {
+    public function getAddJobAction(){
+        echo 'getAddJobAction';
+    }
+}
+```
+
+y ahora en **index.php** Public se establece el nuevo controlador
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once '../vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Aura\Router\RouterContainer;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
+
+$routerContainer = new RouterContainer();
+
+$map = $routerContainer->getMap();
+
+$map->get('index', '/curso_php/', [
+    'controller' => 'App\Controllers\IndexController',
+    'action' => 'indexAction']);
+
+$map->get('addJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction']);
+
+$matcher = $routerContainer->getMatcher();
+
+$route = $matcher->match($request);
+
+function printElement($job) {
+    
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->title . '</h5>';  
+    echo '<p>' . $job->description. '</p>';
+    echo '<p>' . $job->getDurationAsString() . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+
+if(!$route){
+    echo 'No route';
+} else{
+    $handlerData = $route->handler; 
+    $controllerName = $handlerData['controller'];
+    $actionName = $handlerData['action'];
+
+    $controller = new $controllerName;
+    $controller->$actionName();
+}
+```
+Ahora en el navegador hay que ubicar la ruta http://localhost/curso_php/jobs/add y debe cargar el `echo`
+
+![assets/107.png](assets/107.png)
+
+Ahora todo lo que este en el archivo **addJob.php** pasa al controlador pero solamente la parte que esta en php
+
+**JobsController.php**
+
+```
+<?php
+
+namespace App\Controllers;
+
+class JobsController {
+    public function getAddJobAction(){
+        if(!empty($_POST)){
+            $job = new Job();
+            $job->title = $_POST['title'];
+            $job->description = $_POST['description'];
+            $job->save();
+        }
+        
+        if(!empty($_POST)){
+            $job = new Project();
+            $job->title = $_POST['title'];
+            $job->description = $_POST['description'];
+            $job->save();
+        }
+    }
+}
+```
+
+y todo lo que este en addJob queda con codigo de HTML y como ahora se convierte en una vista la movemos a la carpeta de **Views**
+
+Continuando con **JobsController.php** se debe incluir la vista
+
+```
+<?php
+
+namespace App\Controllers;
+
+use Aoo\Models\Job;
+
+class JobsController {
+    public function getAddJobAction(){
+        if(!empty($_POST)){
+            $job = new Job();
+            $job->title = $_POST['title'];
+            $job->description = $_POST['description'];
+            $job->save();
+        }
+        
+        if(!empty($_POST)){
+            $job = new Project();
+            $job->title = $_POST['title'];
+            $job->description = $_POST['description'];
+            $job->save();
+        }
+
+        include '../Views/addJob.php';
+    }
+}
+```
+
+Nuevamente al recargar con la ruta debe aparecer la vista de addJobs
+
+![assets/103.png](assets/103.png)
