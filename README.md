@@ -73,7 +73,7 @@ Curso de php realizado en Platzi
 
 [Clase 36 MVC Controller de la entidad Job](#Clase-36-MVC-Controller-de-la-entidad-Job)
 
-[]()
+[Clase 37 Template engines](#Clase-37-Template-engines)
 
 []()
 
@@ -5068,3 +5068,27 @@ Al verificar la base de datos ya debe aparecer la informacion que estamos envian
 y ahora si revisamos en index tambien debe aparecer este registro
 
 ![assets/118.png](assets/118.png)
+
+Ahora ya tenemos organizado todo en controladores, vistas y modelos además de estár implementados los estandares PSR4 y PSR7. Nuestro proyecto va avanzando muy bien.
+
+## Clase 37 Template engines
+
+Son motores que sirven para renderear el código html y sustituir las partes de código con los datos que se tienen que imprimir.
+
+PHP a pesar de que fue pensado para ser un template engine, se ha enfocado más en la programación, por eso tenemos librerías que se concentran totalmente en esto.
+
+Veamos un ejemplo para analizar las ventajas que puede traer.
+
+para eso vamos a ir a la ruta http://localhost/curso_php/jobs/add dentro de Title de Add Job colocamos Job XSS y en la description vamos a introducir un script de javaScript que inicialmente tambien aparacera en la base de datos el cual es este `<script>alert(''Hello);</script>`
+
+![assets/119.png](assets/119.png)
+
+Ahora simplemente lo guardamos y verificamos en base de datos 
+
+![assets/120.png](assets/120.png)
+
+hasta el momento todo esta ocurriendo como deberia pero ahora al devolvernos a la ruta de la pagina principal y recargar nos sale este script que acabamos de guardar
+
+![assets/121.png](assets/121.png)
+
+Esto es un ataque popular que se llama **XSS(Cross-site scripting)**, lo que hace es que un usuario envie un codigo para que sea ejecutado en la pagina y si no se tiene cuidado ese codigo puede afectar a otros usuarios o el sistema. Nunca se debe confiar en la entrada de los usuarios, siempre se tienen que agregar validaciones para evitar que este tipo de casos sucedan.
