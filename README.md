@@ -77,7 +77,7 @@ Curso de php realizado en Platzi
 
 [Clase 38 Twig](#Clase-38-Twig)
 
-[]()
+[Clase 39 Templates con Twig](#Clase-39-Templates-con-Twig)
 
 []()
 
@@ -5175,3 +5175,234 @@ class JobsController extends BaseController {
 
 Despues de implementar Twig en este caso renderear http://localhost/curso_php/jobs/add y debe cargar normalmente con la vista 
 
+## Clase 39 Templates con Twig
+
+Ahora que ya instalamos Twig, preparemos nuestra aplicación para usarlo.
+
+Ahora lo que haremos es cambiar la extension de php en **index.php** de **Views** por **index.twig**
+
+El primer cambio que notaremos es que ya no podremos utilizar PHP dentro de HTML. Ahora usaremos el autoescape el cual podemos encontrar dentro de la documentacion de twig https://twig.symfony.com/doc/3.x/tags/autoescape.html {{}} en lugar de y dentro colocaremos el código PHP.
+
+dentro de nuestro **index.twig** en el `<h1>` tenemos lo siguiente `<?php echo $name; ?>` ahora lo que vamos a hacer es cambiarlo por la sintaxis que nos indica twig `<h1>{{ name }}</h1>`. y en **indexController.php** cambiamos la dintaxis tambien para renderear el archivo twig `include '../Views/index.php';` por `echo $this->renderHTML('index.twig');`
+
+**indexController.php** 
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\{Job, Project};
+
+class IndexController extends BaseController{
+    public function indexAction(){
+        
+        $jobs = Job::all();
+        $projects = Project::all();
+
+        $name = "Jeyfred Calderon";
+        $limitMonths = 2000;
+
+        echo $this->renderHTML('index.twig');
+
+    }
+}
+```
+ahora nuevamente podemos cargar http://localhost/curso_php/
+
+![assets/122.png](assets/122.png)
+
+Ahora lo que hay que hacer es cargar el resto de codigo que se encuentre en php a twig, como antes teniamos php, con un for ahora lo que vamos a hacer es implementarlo con twig el cual esta especificado en la documentacion https://twig.symfony.com/doc/3.x/tags/for.html
+
+**index.twig**
+
+```
+        <div>
+          <h3 class="border-bottom-gray" >Work Experience</h3>
+          <ul>
+              {% for job in jobs %}
+                <li>{{ job.title }}</li>
+              {% endfor %}
+          </ul>
+        </div>
+```
+
+y en la parte de IndexController.php pasamos los datos del array para que carguen en la vista principal
+
+**IndexController.php**
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\{Job, Project};
+
+
+class IndexController extends BaseController{
+    public function indexAction(){
+        
+        $jobs = Job::all();
+        $projects = Project::all();
+
+        $name = "Jeyfred Calderon";
+        $limitMonths = 2000;
+
+        return $this->renderHTML('index.twig',[
+            'name' => $name,
+            'jobs' => $jobs,
+            'projects' => $projects,
+        ]);
+
+    }
+} 
+```
+
+Nuevamente al cargar la pagina http://localhost/curso_php/ aparecen los titulos de los jobs 
+
+![assets/123.png](assets/123.png)
+
+Ahora solo falta cargar las clases que tenia nuestro **index.php** de la carpeta **public** e implementarlas en **index.twig**, la descripcion y algunos atributos que tenia nuestro archivo principal
+
+**index.twig**
+
+```
+        <div>
+          <h3 class="border-bottom-gray" >Work Experience</h3>
+          <ul>
+              {% for job in jobs %}
+                <li class="work-position">
+                <h5>{{ job.title }}</h5>
+                <p>{{ job.description }} </p>
+                </li>
+              {% endfor %}
+          </ul>
+        </div>
+```
+
+Dentro del archivo **IndexController.php** cambiamos el `echo` por `return`, esto se hace para tener control sobre las cosas que estan pasando, es para que esto regrese el renderHTML para obtener una respuesta HTML y como se esta haciendo uso de PSR7 tambien se pueden crear respuestas que sean compatibles con PSR7 y sean compatibles con PSR7.
+
+Dentro de **BaseController.php** agregamos debajo del namespace `use Zend\Diactoros\Response\HtmlResponse;` y Diactoros tiene especificamente un Html response que va a ser lo que vamos a regresar en la funcion `renderHTML`
+
+**BaseController.php**
+
+```
+<?php
+
+namespace App\Controllers;
+
+use Zend\Diactoros\Response\HtmlResponse;
+
+class BaseController {
+    protected $templateEngine;
+
+    public function __construct(){
+        $loader = new \Twig\Loader\FilesystemLoader('../Views');
+        $this->templateEngine = new \Twig\Environment($loader, [
+            'debug' => true,
+            'cache' => false,
+        ]);
+    }
+
+    public function renderHTML($fileName, $data = []){
+        return new HtmlResponse($this->templateEngine->render($fileName, $data));
+    }
+}
+
+```
+
+y en **index.php** de la carpeta **public**
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once '../vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Aura\Router\RouterContainer;
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
+
+$routerContainer = new RouterContainer();
+
+$map = $routerContainer->getMap();
+
+$map->get('index', '/curso_php/', [
+    'controller' => 'App\Controllers\IndexController',
+    'action' => 'indexAction']);
+
+$map->get('addJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction']);
+
+$map->post('saveJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction']);
+
+$matcher = $routerContainer->getMatcher();
+
+$route = $matcher->match($request);
+
+function printElement($job) {
+    
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->title . '</h5>';  
+    echo '<p>' . $job->description. '</p>';
+    echo '<p>' . $job->getDurationAsString() . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+
+if(!$route){
+    echo 'No route';
+} else{
+    $handlerData = $route->handler; 
+    $controllerName = $handlerData['controller'];
+    $actionName = $handlerData['action'];
+
+    $controller = new $controllerName;
+    $response = $controller->$actionName($request);
+
+    echo $response->getBody();
+}
+```
+
+Al renderear la página ya no sale ningun script gras a twig, solo queda pendiente agregar la parte de **Projects** como reto y verificar que la pagina cargue correctamente con todos los datos.
+
+Por ultimo como **nota** el archivo **style.css** tambien se debe pasar a la carpeta **public** para que los estilos se carguen correctamente
+
+![assets/124.png](assets/124.png)
