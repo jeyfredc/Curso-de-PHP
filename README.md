@@ -75,7 +75,7 @@ Curso de php realizado en Platzi
 
 [Clase 37 Template engines](#Clase-37-Template-engines)
 
-[]()
+[Clase 38 Twig](#Clase-38-Twig)
 
 []()
 
@@ -5092,3 +5092,86 @@ hasta el momento todo esta ocurriendo como deberia pero ahora al devolvernos a l
 ![assets/121.png](assets/121.png)
 
 Esto es un ataque popular que se llama **XSS(Cross-site scripting)**, lo que hace es que un usuario envie un codigo para que sea ejecutado en la pagina y si no se tiene cuidado ese codigo puede afectar a otros usuarios o el sistema. Nunca se debe confiar en la entrada de los usuarios, siempre se tienen que agregar validaciones para evitar que este tipo de casos sucedan.
+
+## Clase 38 Twig
+
+Twig es un Template Engine que nos ayudará a manejar la seguridad en los elementos de entrada de la aplicación.
+
+Instalarlo es muy simple pues solo se integra la dependencia con composer:
+
+lo buscamos en https://packagist.org/ en la barra de busqueda escribimos twig y usamos el primero que aparece
+
+`require twig/twig`
+
+y a continuacion en la terminal para instalarlo usamos
+
+```
+php composer.phar require twig/twig
+```
+
+Luego de instalar twig nos dirigimos hacia la documentacion https://twig.symfony.com/doc/3.x/ y nos fijamos inicialmente en la parte de twig para desarrolladores **Twig for Developers**.
+
+A continuacion vamos a crear un nuevo controlador en **Controllers** llamado **BaseController.php** el cual contiene las siguientes lineas de codigo. Donde tiene una funcion constructora que se va a cargar en vistas, se inicializa la variable templateEngige y se crea un arreglo que tiene el modo debuger en verdadero por si hay errores en el codigo y el cache deshabilitado, por defecto en la documentacion se encuentra habilidato. Despues pasamos una funcion para rendear el HTML, que redenderea el template a traves de su nombre y datos 
+
+**BaseController.php**
+
+```
+<?php
+
+namespace App\Controllers;
+
+class BaseController {
+    protected $templateEngine;
+
+    public function __construct(){
+        $loader = new \Twig\Loader\FilesystemLoader('../Views');
+        $this->templateEngine = new \Twig\Environment($loader, [
+            'debug' => true,
+            'cache' => false,
+        ]);
+    }
+
+    public function renderHTML($fileName, $data = []){
+        return $this->templateEngine -> render($fileName, $data);
+    }
+}
+```
+
+En **JobsController.php** lo que vamos a hacer es extender la clase BaseController y reemplazar esta linea de codigo `include '../Views/addJob.php';` por la siguiente donde estamos pasando el nombre de la vista `echo $this->renderHTML();` y datos pero antes de pasarla en la carpeta **Views** debemos cambiar lo que se llama **addJob.php** por **addJob.twig** y ahora pasamos los datos al echo `echo $this->renderHTML(addJob.twig);`
+
+**JobsController.php**
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\Job;
+use App\Models\Project;
+
+class JobsController extends BaseController {
+    public function getAddJobAction($request){
+
+        if($request->getMethod() == 'POST'){
+            $postData = $request->getParsedBody();
+            $job = new Job();
+            $job->title = $postData['title'];
+            $job->description = $postData['description'];
+            $job->save();
+        }
+        
+        if($request->getMethod() == 'POST'){
+            $postData = $request->getParsedBody();
+            $job = new Project();
+            $job->title = $postData['title'];
+            $job->description = $postData['description'];
+            $job->save();
+        }
+
+        echo $this->renderHTML('addJob.twig');
+    }
+}
+```
+
+Despues de implementar Twig en este caso renderear http://localhost/curso_php/jobs/add y debe cargar normalmente con la vista 
+

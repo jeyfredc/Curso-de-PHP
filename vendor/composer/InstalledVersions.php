@@ -19,7 +19,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '4c2ce3aed9059d6416350737efda9f258d3ec2b9',
+    'reference' => '08d5c7106e068a8bcc5ed83e7ed8d0ad07f9f9be',
     'name' => '__root__',
   ),
   'versions' => 
@@ -31,7 +31,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '4c2ce3aed9059d6416350737efda9f258d3ec2b9',
+      'reference' => '08d5c7106e068a8bcc5ed83e7ed8d0ad07f9f9be',
     ),
     'aura/router' => 
     array (
@@ -292,6 +292,15 @@ private static $installed = array (
       array (
         0 => '2.0',
       ),
+    ),
+    'twig/twig' => 
+    array (
+      'pretty_version' => 'v3.0.5',
+      'version' => '3.0.5.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '9b76b1535483cdf4edf01bb787b0217b62bd68a5',
     ),
     'voku/portable-ascii' => 
     array (

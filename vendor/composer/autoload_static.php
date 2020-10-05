@@ -35,6 +35,10 @@ class ComposerStaticInitc8eefdbd3caa227aad94b9f313957208
         array (
             'Zend\\Diactoros\\' => 15,
         ),
+        'T' => 
+        array (
+            'Twig\\' => 5,
+        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
@@ -86,6 +90,10 @@ class ComposerStaticInitc8eefdbd3caa227aad94b9f313957208
         'Zend\\Diactoros\\' => 
         array (
             0 => __DIR__ . '/..' . '/zendframework/zend-diactoros/src',
+        ),
+        'Twig\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/twig/twig/src',
         ),
         'Symfony\\Polyfill\\Php80\\' => 
         array (
