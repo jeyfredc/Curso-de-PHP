@@ -19,7 +19,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '08d5c7106e068a8bcc5ed83e7ed8d0ad07f9f9be',
+    'reference' => 'f1ec23761c445bec4d9352b23327f84ef7ac132c',
     'name' => '__root__',
   ),
   'versions' => 
@@ -31,7 +31,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '08d5c7106e068a8bcc5ed83e7ed8d0ad07f9f9be',
+      'reference' => 'f1ec23761c445bec4d9352b23327f84ef7ac132c',
     ),
     'aura/router' => 
     array (
@@ -186,6 +186,24 @@ private static $installed = array (
       array (
       ),
       'reference' => '408d5eafb83c57f6365a3ca330ff23aa4a5fa39b',
+    ),
+    'respect/stringifier' => 
+    array (
+      'pretty_version' => '0.2.0',
+      'version' => '0.2.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'e55af3c8aeaeaa2abb5fa47a58a8e9688cc23b59',
+    ),
+    'respect/validation' => 
+    array (
+      'pretty_version' => '2.1.0',
+      'version' => '2.1.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '6c3aed92137836788c8ce654b9c35763c5e98b54',
     ),
     'symfony/console' => 
     array (

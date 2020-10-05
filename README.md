@@ -81,7 +81,7 @@ Curso de php realizado en Platzi
 
 [Clase 40 Extendiendo Templates con Twig](#Clase-40-Extendiendo-Templates-con-Twig)
 
-[]()
+[Clase 41 Validaciones](#Clase-41-Validaciones)
 
 []()
 
@@ -5606,3 +5606,126 @@ Ahora falta corregir **addJob.twig** para que tambien herede de **layout.twig**
 ```
 
 Despues de realizar esto, podemos recargar las rutas en PHP y verificar que esten rendereando las vistas correctamente
+
+## Clase 41 Validaciones
+
+Cuando se esta desarrollando una aplicacion en PHP, se habia dicho en clases anteriores que algun usuario puede enviar un ataque a nuestra aplicacion y perjudicar a otros y es por eso que se deben implementar validaciones.
+
+
+Haremos validaciones del lado del servidor.
+
+las validaciones hacen que la aplicacion no falle y no afecte la seguridad de la misma
+
+Usaremos esta dependencia: https://packagist.org/packages/respect/validation la cual integraremos a composer.
+
+instalamos en la terminal con composer
+
+ ```
+php composer.phar require respect/validation
+ ```
+
+ Despues de instalar lo vamos a implementar donde estamos recibiendo los datos del usuario que es en **JobsController.php** para eso vamos a hacer uso de la documentacion https://respect-validation.readthedocs.io/en/latest/feature-guide/#simple-validation utilizando **Validating object attributes** 
+
+ ```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\Job;
+use App\Models\Project;
+use Respect\Validation\Validator as v;
+
+
+class JobsController extends BaseController{
+    public function getAddJobAction($request){
+
+        $responseMessage = null;
+
+        if($request->getMethod() == 'POST'){
+            $postData = $request->getParsedBody();
+            $jobValidator = v::key('title', v::stringType()->notEmpty())
+            ->key('description', v::stringType()->notEmpty());
+            try{
+                $jobValidator->assert($postData); // true
+                $postData = $request->getParsedBody();
+                $job = new Job();
+                $job->title = $postData['title'];
+                $job->description = $postData['description'];
+                $job->save();
+                $responseMessage = 'Saved';
+            } catch(\Exception $e){
+                $responseMessage = $e->getMessage();
+            }
+            
+        } 
+        
+        if($request->getMethod() == 'POST'){
+            $postData = $request->getParsedBody();
+            $projectValidator = v::key('title', v::stringType()->notEmpty())
+            ->key('description', v::stringType()->notEmpty());
+            try{
+                $projectValidator->assert($postData); // true
+                $postData = $request->getParsedBody();
+                $project = new Project();
+                $project->title = $postData['title'];
+                $project->description = $postData['description'];
+                $project->save();
+                $responseMessage = 'Saved';
+                }catch(\Exception $e){
+                $responseMessage = $e->getMessage();
+            }
+        }
+
+        return $this->renderHTML('addJob.twig', [
+            'responseMessage' => $responseMessage
+        ]);
+    }
+}
+ ```
+y en **addJob.twig** agregamos un bloque de alerta antes del formulario
+
+```
+{% extends "layout.twig" %}
+
+
+{% block content %} 
+<h1>Add Job</h1>
+<div class="alert alert-primary" role="alert">
+    {{ responseMessage }}
+    </div>
+    
+    <form action="/curso_php/jobs/add" method="post" >
+        <label for="">Title:</label>
+        <input type="text" name="title"><br>
+        <label for="">Description:</label>
+        <input type="text" name="description"><br>
+        <button type="submit">Save</button>
+    </form>
+<br>
+
+    <h1>Add Project</h1>
+    <form action="/curso_php/jobs/add" method="post" >
+        <label for="">Title:</label>
+        <input type="text" name="title"><br>
+        <label for="">Description:</label>
+        <input type="text" name="description"><br>
+        <button type="submit">Save</button>
+    </form>
+
+{% endblock %}
+
+```
+
+Al pasar y dar click en save en el render http://localhost/curso_php/jobs/add con el titulo y la descripcion vacia va a lanzar un mensaje que indica que requiere pasar estos valores
+
+![assets/125.png](assets/125.png)
+
+y ahora al pasar descripcion y titulo y guardar va a salir por pantalla saved
+
+![assets/126.png](assets/126.png)
+
+![assets/127.png](assets/127.png)
+
+Despues tambien se verifica en la base de datos y esto ya debe aparecer
+
+![assets/128.png](assets/128.png)
