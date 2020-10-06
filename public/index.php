@@ -10,6 +10,7 @@ session_start();
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Aura\Router\RouterContainer;
+use Zend\Diactoros\Response\RedirectResponse;
 
 password_hash('superSecurePassword', PASSWORD_DEFAULT);
 
@@ -46,15 +47,18 @@ $map = $routerContainer->getMap();
 
 $map->get('index', '/curso_php/', [
     'controller' => 'App\Controllers\IndexController',
-    'action' => 'indexAction']);
+    'action' => 'indexAction',
+    'auth'=>true,]);
 
 $map->get('addJobs', '/curso_php/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
-    'action' => 'getAddJobAction']);
+    'action' => 'getAddJobAction',
+    'auth'=>true,]);
 
 $map->post('saveJobs', '/curso_php/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
-    'action' => 'getAddJobAction']);
+    'action' => 'getAddJobAction',
+    'auth'=>true,]);
 
 $map->get('addUsers', '/curso_php/signin', [
     'controller' => 'App\Controllers\UsersController',
@@ -76,7 +80,7 @@ $map->get('logout', '/curso_php/logout', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'getLogout',
     ]);
-    
+
 $map->get('admin', '/curso_php/admin', [
     'controller' => 'App\Controllers\AdminController',
     'action' => 'getIndex',
@@ -113,12 +117,12 @@ if(!$route){
 
     //Esto es para hacer una prueba. Si necesita autenticacion y no esta definido el userId imprime el mensaje de ruta protegida y luego se usa la palabra reservada die para terminar el script, esto solo es recomendable hacerlo para pruebas
     if($needsAuth && !$sessionUserId){
-        echo 'Protected route';
-        die;
+        $response = new RedirectResponse('/curso_php/login');
+    }else{
+        $controller = new $controllerName;
+        $response = $controller->$actionName($request);
     }
 
-    $controller = new $controllerName;
-    $response = $controller->$actionName($request);
 
     //foreach significa que vamos a recorrer un arreglo
     //Obtiene el encabezado que se han generado en las respuestas y los encabezados tienen un nombre que pueden contener mas de un valor, sin embargo cuando se tiene que imprimir se debe hacer uno por uno (nombre, valor)
