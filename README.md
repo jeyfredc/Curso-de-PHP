@@ -87,7 +87,7 @@ Curso de php realizado en Platzi
 
 [Clase 43 Tips de seguridad para subir archivos en PHP](#Clase-43-Tips-de-seguridad-para-subir-archivos-en-PHP)
 
-[]()
+[Clase 44 Reto. Creación de usuarios](#Clase-44-Reto-Creación-de-usuarios)
 
 []()
 
@@ -5925,3 +5925,11 @@ Lo ideal es implementar una seguridad tanto por el lado del cliente como por el 
 Combina todas las que te sean posibles para tener mayor seguridad en tu app.
 
 Si conoces otro tip compártelo con todos en la sección de discusiones.
+
+## Clase 44 Reto. Creación de usuarios
+
+Vamos a continuar el proyecto creando un sistema de autenticacion para que no cualquier usuario externo púeda llegar y modificar los Jobs o los Projects que tenemos en nuestro portafolio. Normalmente los proyectos que se realizan requieren autenticacion de multiples usuarios.
+
+Para eso necesitamos crear ususarios en nuestra base de datos para esto se debe crear un formulario como el que tenemos para Jobs, crear una tabla users como la que se usa pára Jobs que contenga un campo de email y un campo password y se almacenen esos datos que se utilizaran dentro de esa tabla que despues se utilizara.
+
+para los password nunca debemos almacenarlos en texto plano porque  de alguna forma si alguien llega a tener acceso, los usuarios estarian vulnerables, lo que se debe hacer es encriptar las contraseñas, entonces cuando se vaya a guardar el usuario en la base de datos antes de guardarlo se debe utilizar un metodo de PHP llamado Password hash  `password_hash('superSecurePassword', PASSWORD_DEFAULT);`, esta se encuentra en la pagina oficial de PHP https://www.php.net/manual/es/function.password-hash.php 
