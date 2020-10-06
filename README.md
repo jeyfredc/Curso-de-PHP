@@ -6079,10 +6079,10 @@ entonces lo que se esta haciendo es finalmente agregar otra condicion para que s
 
 ![assets/136.png](assets/136.png)
 
-Si pongo el email correcto con la contraseña correcta ahora va a imprimir Correct
+Si pongo el email correcto con la contraseña correcta ahora va a imprimir **Correct**
 
 ![assets/140.png](assets/140.png)
 
-si pongo el email correcto con la contraseña incorrecta imprime Wrong
+si pongo el email correcto con la contraseña incorrecta imprime **Wrong**
 
 ![assets/141.png](assets/141.png)
