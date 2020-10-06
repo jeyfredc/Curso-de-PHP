@@ -93,7 +93,7 @@ Curso de php realizado en Platzi
 
 [Clase 46 Formulario de Login](#Clase-46-Formulario-de-Login)
 
-[]()
+[Clase 47 Manejo de sesiones](#Clase-47-Manejo-de-sesiones)
 
 []()
 
@@ -6351,3 +6351,294 @@ Ahora, cuando trabajamos usando PHP, la linea de inicio no la tenemos que poner 
 
 Les dejo una lista de los encabezados que pueden usar:
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
+
+## Clase 47 Manejo de sesiones
+
+Manejaremos sesiones con PHP
+
+Una vez que el usuario esté logeado almacenaremos su id en la variable $_SESSION, esta variable representará la sesión y estará viva mientras el usuario esté logeado.
+
+Utilizaremos session_start(); para inicializar la sesión y controlarla en todas las páginas que tiene acceso.
+
+Si nosotros entramos a http://localhost/curso_php/jobs/add, no hay nada que controle que podamos acceder a ella si conocemos a esta ruta, la idea es que el usuario al hacer login se pueda desplazar hasta alli
+
+para eso en **index.php** lo que haremos es crear una nueva ruta
+
+```
+$map->get('admin', '/curso_php/admin', [
+    'controller' => 'App\Controllers\AdminController',
+    'action' => 'getIndex']);
+```
+esto nos indica que ahora vamos a tener que crear un controlador llamado **AdminController.php** en la carpeta **Controller** y que dentro de este archivo vamos a tener una funcion llamada `getIndex`
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\{Job, Project};
+
+
+class AdminController extends BaseController{
+    public function getIndex(){
+
+        return $this->renderHTML('admin.twig');
+
+    }
+}
+```
+
+Ahora al renderear `admin.twig` estamos obligados a crear el archivo en la carpeta **Views**
+
+```
+{% extends "layout.twig" %}
+
+{% block content %}
+
+<h1>Dashboard</h1>
+
+<ul>
+
+    <li><a href="/curso_php/signin">Add User</a></li>
+    <li><a href="/curso_php/jobs/add">Add Job</a></li>
+</ul>
+
+{% endblock %}
+```
+
+![assets/147.png](assets/147.png)
+
+Para autenticar a los usuarios vamos a modificar **index.php** public y se va a agregar una variable extra para que indique si necesita ser una ruta segura o no `'auth'=>true`, esto para saber si la ruta requiere autenticacion o no y en en else del $route se agrega otra variable para indicar que siempre se necesita autenticar y si no esta definido va a estar en false `$needsAuth = $handlerData['auth'] ?? false;`
+
+Para controlar la autenticacion PHP maneja un concepto llamado sesiones que se maneja a traves de una super global la cual es `$_SESSION`.
+
+Una sesion funciona utilizando una identificacion entre un cliente y el servidor.
+
+Lo que se debe  hacer es inicializar las sesiones con la funcion `session_start();`
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once '../vendor/autoload.php';
+
+session_start();
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Aura\Router\RouterContainer;
+
+password_hash('superSecurePassword', PASSWORD_DEFAULT);
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
+
+$routerContainer = new RouterContainer();
+
+$map = $routerContainer->getMap();
+
+$map->get('index', '/curso_php/', [
+    'controller' => 'App\Controllers\IndexController',
+    'action' => 'indexAction']);
+
+$map->get('addJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction']);
+
+$map->post('saveJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction']);
+
+$map->get('addUsers', '/curso_php/signin', [
+    'controller' => 'App\Controllers\UsersController',
+    'action' => 'getAddUserAction']);
+
+$map->post('saveUsers', '/curso_php/signin', [
+    'controller' => 'App\Controllers\UsersController',
+    'action' => 'getAddUserAction']);
+
+$map->get('loginForm', '/curso_php/login', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'getLogin']);
+
+$map->post('auth', '/curso_php/auth', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'postLogin']);
+
+$map->get('admin', '/curso_php/admin', [
+    'controller' => 'App\Controllers\AdminController',
+    'action' => 'getIndex',
+    'auth'=>true,]);
+
+$matcher = $routerContainer->getMatcher();
+
+$route = $matcher->match($request);
+
+function printElement($job) {
+    
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->title . '</h5>';  
+    echo '<p>' . $job->description. '</p>';
+    echo '<p>' . $job->getDurationAsString() . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+
+if(!$route){
+    echo 'No route';
+} else{
+    $handlerData = $route->handler; 
+    $controllerName = $handlerData['controller'];
+    $actionName = $handlerData['action'];
+    $needsAuth = $handlerData['auth'] ?? false;
+
+    $controller = new $controllerName;
+    $response = $controller->$actionName($request);
+
+    //foreach significa que vamos a recorrer un arreglo
+    //Obtiene el encabezado que se han generado en las respuestas y los encabezados tienen un nombre que pueden contener mas de un valor, sin embargo cuando se tiene que imprimir se debe hacer uno por uno (nombre, valor)
+    foreach($response->getHeaders() as $name => $values)
+    {
+        foreach($values as $value){
+            //la funcion header es como se imprimen los encabezados, sprintf es una funcion nativa de PHP que permite imprimir cosas dentro de una cadena 
+            header(sprintf('%s: %s', $name, $value), false);
+        }
+    }
+    //La funcion http lo que hace es traer los codigos que nos da el servidor, codigos 200, 300, 400, 500 que nos dan informacion de como esta en ese momento
+    http_response_code($response->getStatusCode());
+
+    echo $response->getBody();
+}
+
+```
+
+En la parte de **AuthController.php** donde se indica que la sesion es correcta se puede establecer informacion del usuario como el userId que es desde donde nos estamos autenticando con el servidor `$_SESSION['userId'] = $user->id;`
+
+Si en el navegador recargamos la ruta va a indicar que esta protegida http://localhost/curso_php/admin
+
+![assets/146.png](assets/146.png)
+
+Para poder acceder a esa ruta primero debemos autenticarnos en login http://localhost/curso_php/login
+
+![assets/136.png](assets/136.png)
+
+despues de hacerlo correctamente ya tenemos acceso al Dashboard
+
+![assets/147.png](assets/147.png)
+
+Tambien falta hacer una forma para el logout y esta se va a realizar dentro de **AuthController.php** añadiendo otra funcion que se llame `getLogout` en este lo que se quiere hacer es quitar el userId guardado y redireccionar de nuevo hacia login
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\User;
+use Respect\Validation\Validator as v;
+use Zend\Diactoros\Response\RedirectResponse;
+
+
+class AuthController extends BaseController{
+    public function getLogin(){
+        return $this->renderHTML('login.twig');
+    }
+
+
+    public function postLogin($request){
+        $posData = $request->getParsedBody();
+        $responseMessage = null;
+
+        $user = User::where('email', $posData['email'])->first(); //Se indica que busque dentro de la tabla users el primer dato que ingresamos en el campo email y traelo
+        if($user){
+            if(password_verify($posData['password'], $user->password)){
+                $_SESSION['userId'] = $user->id;
+                return new RedirectResponse('admin');
+
+            }else{
+                $responseMessage = 'Bad credentials';
+            }
+        }else{
+            $responseMessage = 'Bad credentials';
+        }
+
+        return $this->renderHTML('login.twig', [
+            'responseMessage' => $responseMessage,
+        ]);
+    }
+
+    public function getLogout(){
+        unset($_SESSION['userId']); //el metodo unset permite eliminar un elemento de un arreglo asociativo
+        return new RedirectResponse('login');
+    }
+
+}
+```
+
+y ahora en la vista e **admin.twig** se agrega una nueva forma para hacer el redirect para ir hacia login de nuevo
+
+```
+{% extends "layout.twig" %}
+
+{% block content %}
+
+<h1>Dashboard</h1>
+
+<ul>
+
+    <li><a href="/curso_php/signin">Add User</a></li>
+    <li><a href="/curso_php/jobs/add">Add Job</a></li>
+</ul>
+<br><br>
+<button class="btn btn-secundary"><a href="/curso_php/logout">Logout</a></button>
+{% endblock %}
+```
+
+y agregar la ruta a **index.php** public
+
+```
+$map->get('logout', '/curso_php/logout', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'getLogout',
+    ]);
+```
+
+Ahora nuevamente se recarga el navegador con la ruta admin http://localhost/curso_php/admin
+
+![assets/148.png](assets/148.png)
+
+y nuevamente debe regresar a login
+
+![assets/149.png](assets/149.png)
+
+Como reto queda proteger todas las rutas del mapeo y en vez de mostrar un mensaje de protected route hacer un redireccionamiento hacia login

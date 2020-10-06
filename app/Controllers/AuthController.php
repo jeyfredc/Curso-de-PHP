@@ -20,6 +20,7 @@ class AuthController extends BaseController{
         $user = User::where('email', $posData['email'])->first(); //Se indica que busque dentro de la tabla users el primer dato que ingresamos en el campo email y traelo
         if($user){
             if(password_verify($posData['password'], $user->password)){
+                $_SESSION['userId'] = $user->id;
                 return new RedirectResponse('admin');
 
             }else{
@@ -32,6 +33,11 @@ class AuthController extends BaseController{
         return $this->renderHTML('login.twig', [
             'responseMessage' => $responseMessage,
         ]);
+    }
+
+    public function getLogout(){
+        unset($_SESSION['userId']); //el metodo unset permite eliminar un elemento de un arreglo asociativo
+        return new RedirectResponse('login');
     }
 
 }
