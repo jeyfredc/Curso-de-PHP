@@ -99,5 +99,17 @@ if(!$route){
     $controller = new $controllerName;
     $response = $controller->$actionName($request);
 
+    //foreach significa que vamos a recorrer un arreglo
+    //Obtiene el encabezado que se han generado en las respuestas y los encabezados tienen un nombre que pueden contener mas de un valor, sin embargo cuando se tiene que imprimir se debe hacer uno por uno (nombre, valor)
+    foreach($response->getHeaders() as $name => $values)
+    {
+        foreach($values as $value){
+            //la funcion header es como se imprimen los encabezados, sprintf es una funcion nativa de PHP que permite imprimir cosas dentro de una cadena 
+            header(sprintf('%s: %s', $name, $value), false);
+        }
+    }
+    //La funcion http lo que hace es traer los codigos que nos da el servidor, codigos 200, 300, 400, 500 que nos dan informacion de como esta en ese momento
+    http_response_code($response->getStatusCode());
+
     echo $response->getBody();
 }

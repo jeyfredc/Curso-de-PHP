@@ -91,7 +91,7 @@ Curso de php realizado en Platzi
 
 [Clase 45 Autenticando usuarios](#Clase-45-Autenticando-usuarios)
 
-[]()
+[Clase 46 Formulario de Login](#Clase-46-Formulario-de-Login)
 
 []()
 
@@ -6086,3 +6086,268 @@ Si pongo el email correcto con la contraseña correcta ahora va a imprimir **Cor
 si pongo el email correcto con la contraseña incorrecta imprime **Wrong**
 
 ![assets/141.png](assets/141.png)
+
+## Clase 46 Formulario de Login
+
+Ahora lo que haremos es mostrar un mensaje de error en caso de que el password este incorrecto y en caso que este bien lo vamos a redireccionar a otra pagina.
+
+para eso vamos a agregar a **login.twig** el alert que hemos implementando en otros archivos como el de **addJob.twig**
+
+```
+    {% extends "layout.twig" %}
+
+
+    {% block content %} 
+
+    <h1>Login</h1>
+        <div class="alert alert-primary" role="alert">
+            {{ responseMessage }}
+        </div>
+    <form action="/curso_php/auth" method="post" enctype="multipart/form-data">
+        <input type="text" name="email" placeholder="Email"><br>
+        <input type="password" name="password" placeholder="password"><br>
+        <button type="submit">Login</button>
+    </form>
+
+
+    {% endblock %}
+```
+
+Y ahora en nuestro **AuthController.php** vamos a renderear el mismo login y agregar el `$responseMessage`
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\User;
+use Respect\Validation\Validator as v;
+
+
+class AuthController extends BaseController{
+    public function getLogin(){
+        return $this->renderHTML('login.twig');
+    }
+
+
+    public function postLogin($request){
+        $posData = $request->getParsedBody();
+        $responseMessage = null;
+
+        $user = User::where('email', $posData['email'])->first(); //Se indica que busque dentro de la tabla users el primer dato que ingresamos en el campo email y traelo
+        if($user){
+            if(password_verify($posData['password'], $user->password)){
+                echo 'Correct';
+            }else{
+                $responseMessage = 'Bad credentials';
+            }
+        }else{
+            $responseMessage = 'Bad credentials';
+        }
+
+        return $this->renderHTML('login.twig', [
+            'responseMessage' => $responseMessage,
+        ]);
+    }
+
+}
+```
+
+Nuevamente autenticando ya nos debe indicar la respuesta que estamos introduciendo mal los datos
+
+![assets/142.png](assets/142.png)
+
+![assets/143.png](assets/143.png)
+
+Ahora lo que hay que hacer es crear una respuesta de redireccionamiento para eso tenemos que hacer uso de Diactoros con `RedirectResponse` `use Zend\Diactoros\Response\RedirectResponse;` e implementarlo en **AuthController.php** y donde teniamos la confirmacion de password correcto vamos a crear la respuesta de redireccion `return new RedirectResponse('/cursophp/admin');`
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\User;
+use Respect\Validation\Validator as v;
+use Zend\Diactoros\Response\RedirectResponse;
+
+
+class AuthController extends BaseController{
+    public function getLogin(){
+        return $this->renderHTML('login.twig');
+    }
+
+
+    public function postLogin($request){
+        $posData = $request->getParsedBody();
+        $responseMessage = null;
+
+        $user = User::where('email', $posData['email'])->first(); //Se indica que busque dentro de la tabla users el primer dato que ingresamos en el campo email y traelo
+        if($user){
+            if(password_verify($posData['password'], $user->password)){
+                return new RedirectResponse('admin');
+
+            }else{
+                $responseMessage = 'Bad credentials';
+            }
+        }else{
+            $responseMessage = 'Bad credentials';
+        }
+
+        return $this->renderHTML('login.twig', [
+            'responseMessage' => $responseMessage,
+        ]);
+    }
+
+}
+```
+
+Al hacer login correctamente no va a aparecer nada en nuestra ruta de redireccion
+
+![assets/144.png](assets/144.png)
+
+Aqui nos esta regresando una respuesta vacia. Cuando queremos hacer un redireccionamiento en PHP lo que tenemos que hacer es escribir un header o encabezado.
+
+si nos fijamos en nuestro **index.php** Public lo que estamos haciendo es regresar una respuesta del cuerpo `echo $response->getBody();`. y ahora lo que tenemos que hacer es leer los headers y mandarlos a imprimir, esto se hace con un ciclo `foreach`
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once '../vendor/autoload.php';
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Aura\Router\RouterContainer;
+
+password_hash('superSecurePassword', PASSWORD_DEFAULT);
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
+
+$routerContainer = new RouterContainer();
+
+$map = $routerContainer->getMap();
+
+$map->get('index', '/curso_php/', [
+    'controller' => 'App\Controllers\IndexController',
+    'action' => 'indexAction']);
+
+$map->get('addJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction']);
+
+$map->post('saveJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction']);
+
+$map->get('addUsers', '/curso_php/signin', [
+    'controller' => 'App\Controllers\UsersController',
+    'action' => 'getAddUserAction']);
+
+$map->post('saveUsers', '/curso_php/signin', [
+    'controller' => 'App\Controllers\UsersController',
+    'action' => 'getAddUserAction']);
+
+$map->get('loginForm', '/curso_php/login', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'getLogin']);
+
+$map->post('auth', '/curso_php/auth', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'postLogin']);
+
+$matcher = $routerContainer->getMatcher();
+
+$route = $matcher->match($request);
+
+function printElement($job) {
+    
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->title . '</h5>';  
+    echo '<p>' . $job->description. '</p>';
+    echo '<p>' . $job->getDurationAsString() . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+
+if(!$route){
+    echo 'No route';
+} else{
+    $handlerData = $route->handler; 
+    $controllerName = $handlerData['controller'];
+    $actionName = $handlerData['action'];
+
+    $controller = new $controllerName;
+    $response = $controller->$actionName($request);
+
+    //foreach significa que vamos a recorrer un arreglo
+    //Obtiene el encabezado que se han generado en las respuestas y los encabezados tienen un nombre que pueden contener mas de un valor, sin embargo cuando se tiene que imprimir se debe hacer uno por uno (nombre, valor)
+    foreach($response->getHeaders() as $name => $values)
+    {
+        foreach($values as $value){
+            //la funcion header es como se imprimen los encabezados, sprintf es una funcion nativa de PHP que permite imprimir cosas dentro de una cadena 
+            header(sprintf('%s: %s', $name, $value), false);
+        }
+    }
+    //La funcion http lo que hace es traer los codigos que nos da el servidor, codigos 200, 300, 400, 500 que nos dan informacion de como esta en ese momento
+    http_response_code($response->getStatusCode());
+
+    echo $response->getBody();
+}
+```
+
+Al logear correctamente en la aplicacion ya debe aparecer que no encuentra ruta porque todavia no ha sido creada
+
+![assets/136.png](assets/136.png)
+
+![assets/145.png](assets/145.png)
+
+Los mensajes HTTP en realidad se forman como si fueran mensajes de texto, y estan formados por 4 partes:
+
+- Una linea de inicio
+
+- Una seccion de encabezados (headers) la cual es opcional
+
+- Una linea en blanco
+
+- El cuerpo del mensaje
+
+Los headers permiten enviar cierta informacion adicional entre el server y el cliente, por ejemplo en este caso, nosotros le indicamos al cliente que redireccione a una nueva url.
+
+Estos encabezados en un futuro les pueden ayudar en temas de cache, seguridad, si hacen una API con los headers podemos especificar el formato de las respuestas, entre otras cosas.
+
+Ahora, cuando trabajamos usando PHP, la linea de inicio no la tenemos que poner manualmente, los encabezados los tenemos que agregar usando la funcion header, la linea en blanco no la agregamos nosotros y el body es lo que nosotros imprimimos.
+
+Les dejo una lista de los encabezados que pueden usar:
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
