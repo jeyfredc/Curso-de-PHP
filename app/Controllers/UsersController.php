@@ -21,7 +21,7 @@ class UsersController extends BaseController{
 
                 $user = new User();
                 $user->email = $postData['email'];
-                $user->password = password_hash($postData['email'], PASSWORD_DEFAULT);
+                $user->password = password_hash($postData['password'], PASSWORD_DEFAULT);
                 $user->save();
                 $responseMessage = 'Saved';
             } catch(\Exception $e){

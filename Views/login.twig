@@ -1,10 +1,13 @@
-{% extends "layout.twig" %}
+    {% extends "layout.twig" %}
 
 
-{% block content %}
+    {% block content %} 
+    <h1>Login</h1>
+    <form action="/curso_php/auth" method="post" enctype="multipart/form-data">
+        <input type="text" name="email" placeholder="Email"><br>
+        <input type="password" name="password" placeholder="password"><br>
+        <button type="submit">Login</button>
+    </form>
 
-<form>
-    <input type="text" name
-</form>
 
-{% endblock %}
+    {% endblock %}

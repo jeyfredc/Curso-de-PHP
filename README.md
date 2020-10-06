@@ -5947,15 +5947,142 @@ $map->get('loginForm', '/curso_php/login', [
 Ahora en la carpeta **Controllers**, creamos nuestro constrolador **AuthController.php**
 
 ```
+<?php
 
+namespace App\Controllers;
+
+use App\Models\User;
+use Respect\Validation\Validator as v;
+
+
+class AuthController extends BaseController{
+    public function getLogin(){
+        return $this->renderHTML('login.twig');
+    }
+}
+
+        
 ```
 
 Ahora en la carpeta **Views**, creamos la vista **login.twig**
 
 ```
+    {% extends "layout.twig" %}
+
+
+    {% block content %} 
+    <h1>Login</h1>
+    <form action="/curso_php/auth" method="post" enctype="multipart/form-data">
+        <input type="text" name="email" placeholder="Email"><br>
+        <input type="password" name="password" placeholder="password"><br>
+        <button type="submit">Login</button>
+    </form>
+
+
+    {% endblock %}
 
 ```
+Ahora como en el form action de nuestra vista estamos redirigiendo a la ruta auth tambien debemos agregar la ruta a **index.php** de **public**
+
+```
+$map->post('auth', '/curso_php/auth', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'postLogin']);
+```
+
+y ahora dentro de nuestro controlador **AuthController.php** agregamos la accion o funcion `postLogin`
 
 Utilizaremos Eloquent para acceder a la tabla User de la base de datos y obtener el password, para después compararlo y ejecutar la validación.
 
 Las validaciones de password las haremos con la función password_verify()
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\User;
+use Respect\Validation\Validator as v;
+
+
+class AuthController extends BaseController{
+    public function getLogin(){
+        return $this->renderHTML('login.twig');
+    }
+
+
+    public function postLogin($request){
+        $posData = $request->getParsedBody();
+        $user = User::where('email', $posData['email'])->first(); //Se indica que busque dentro de la tabla users el primer dato que ingresamos en el campo email y traelo
+        if($user){
+            echo 'Found';
+        }else{
+            echo 'Not Found';
+        }
+    }
+
+}
+```
+Para la prueba ya debe haber registrado un email y un password en la base de datos
+
+![assets/135.png](assets/135.png)
+
+Ahora lo que haremos es ingresar a nuestra ruta login http://localhost/curso_php/login para acceder y que la pagina nos muestre si encontro o no estos campos
+
+![assets/136.png](assets/136.png)
+
+por el momento nos va a arrojar un error pero en la parte superior la pagina imprime **Found**, lo que quiere decir que si esta encontrando los campos de la tabla users
+
+![assets/137.png](assets/137.png)
+
+y si se escribe un correo que no existe la pagina impre **Not Found**
+
+![assets/138.png](assets/138.png)
+
+![assets/139.png](assets/139.png)
+
+Despues de realizar la prueba dentro de nuestro AuthController utilizaremos `\password_verify()` que va a ser el que verifique y autentique directamente con la base de datos y e indica con un if que se quiere verificar el password que se envio con el password que tiene el usuario
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\User;
+use Respect\Validation\Validator as v;
+
+
+class AuthController extends BaseController{
+    public function getLogin(){
+        return $this->renderHTML('login.twig');
+    }
+
+
+    public function postLogin($request){
+        $posData = $request->getParsedBody();
+        $user = User::where('email', $posData['email'])->first(); //Se indica que busque dentro de la tabla users el primer dato que ingresamos en el campo email y traelo
+        if($user){
+            if(\password_verify($posData['password'], $user->password)){
+                echo 'Correct';
+            }else{
+                echo 'Wrong';
+            }
+        }else{
+            echo 'Not Found';
+        }
+    }
+
+}
+```
+
+entonces lo que se esta haciendo es finalmente agregar otra condicion para que si tiene el email correcto pero no el password le informe al usuario que esta escribiendo mal la contraseña
+
+![assets/136.png](assets/136.png)
+
+Si pongo el email correcto con la contraseña correcta ahora va a imprimir Correct
+
+![assets/140.png](assets/140.png)
+
+si pongo el email correcto con la contraseña incorrecta imprime Wrong
+
+![assets/141.png](assets/141.png)
