@@ -5572,7 +5572,6 @@ y ahora dentro del archivo **index.twig** heredamos de **layout.twig** con la si
       </div>
     </div>
 {% endblock %}
-**
 ```
 
 Ahora falta corregir **addJob.twig** para que tambien herede de **layout.twig**
