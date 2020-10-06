@@ -83,7 +83,7 @@ Curso de php realizado en Platzi
 
 [Clase 41 Validaciones](#Clase-41-Validaciones)
 
-[]()
+[Clase 42 Ejemplo de subida de archivos](#Clase-42-Ejemplo-de-subida-de-archivos)
 
 []()
 
@@ -5729,3 +5729,152 @@ y ahora al pasar descripcion y titulo y guardar va a salir por pantalla saved
 Despues tambien se verifica en la base de datos y esto ya debe aparecer
 
 ![assets/128.png](assets/128.png)
+
+## Clase 42 Ejemplo de subida de archivos
+
+Al subir archivos debemos tener muchos puntos de seguridad en cuenta, pues exponemos el acceso al servidor.
+
+Dentro de nuestro archivo **addJob.twig** vamos a agregar otro `input` de tipo file
+
+Primero prepararemos el form colocando la propiedad: enctype='multipart/form-data
+```
+{% extends "layout.twig" %}
+
+
+{% block content %} 
+<h1>Add Job</h1>
+<div class="alert alert-primary" role="alert">
+    {{ responseMessage }}
+    </div>
+
+    <form action="/curso_php/jobs/add" method="post" enctype="multipart/form-data">
+        <label for="">Title:</label>
+        <input type="text" name="title"><br>
+        <label for="">Description:</label>
+        <input type="text" name="description"><br>
+        <input type="file" name="logo"><br>
+        <button type="submit">Save</button>
+    </form>
+<br>
+
+    <h1>Add Project</h1>
+    <form action="/curso_php/jobs/add" method="post" enctype="multipart/form-data">
+        <label for="">Title:</label>
+        <input type="text" name="title"><br>
+        <label for="">Description:</label>
+        <input type="text" name="description"><br>
+        <input type="file" name="logo"><br>
+        <button type="submit">Save</button>
+    </form>
+
+{% endblock %}
+```
+
+cuando recargamos la ruta http://localhost/curso_php/jobs/add tenemos la opcion de cargar archivos, por ejemplo para colocar el logo de la empresa en este caso que es un portafolio
+
+![assets/129.png](assets/129.png)
+
+Dentro de **JobsController.php** vaos a generar una ruta para que el archivo que guardemos se mueva a una carpeta y se almacene
+
+```
+<?php
+
+namespace App\Controllers;
+
+use App\Models\Job;
+use App\Models\Project;
+use Respect\Validation\Validator as v;
+
+
+class JobsController extends BaseController{
+    public function getAddJobAction($request){
+
+        $responseMessage = null;
+
+        if($request->getMethod() == 'POST'){
+            $postData = $request->getParsedBody();
+            $jobValidator = v::key('title', v::stringType()->notEmpty())
+            ->key('description', v::stringType()->notEmpty());
+            try{
+                $jobValidator->assert($postData); // true
+                $postData = $request->getParsedBody();
+
+                $files = $request->getUploadedFiles();
+                $logo = $files['logo'];
+
+                if($logo->getError() == UPLOAD_ERR_OK){
+                    $fileName = $logo->getClientFilename();
+                    $logo->moveTo("uploads/$fileName");
+                }
+
+                $job = new Job();
+                $job->title = $postData['title'];
+                $job->description = $postData['description'];
+                $job->save();
+                $responseMessage = 'Saved';
+            } catch(\Exception $e){
+                $responseMessage = $e->getMessage();
+            }
+            
+        } 
+        
+        if($request->getMethod() == 'POST'){
+            $postData = $request->getParsedBody();
+            $projectValidator = v::key('title', v::stringType()->notEmpty())
+            ->key('description', v::stringType()->notEmpty());
+            try{
+                $projectValidator->assert($postData); // true
+                $postData = $request->getParsedBody();
+
+                $files = $request->getUploadedFiles();
+                $logo = $files['logo'];
+
+                if($logo->getError() == UPLOAD_ERR_OK){
+                    $fileName = $logo->getClientFilename();
+                    $logo->moveTo("uploads/$fileName");
+                }
+
+                $project = new Project();
+                $project->title = $postData['title'];
+                $project->description = $postData['description'];
+                $project->save();
+                $responseMessage = 'Saved';
+            }catch(\Exception $e){
+                $responseMessage = $e->getMessage();
+            }
+        }
+
+        return $this->renderHTML('addJob.twig', [
+            'responseMessage' => $responseMessage,
+        ]);
+    }
+}
+```
+
+tambien dentro de nuestra carpeta **public** vamos a crear una subcarpeta que se llame **uploads** que es donde vamos a guardar las imagenes que subamos
+
+ahora lo que haremos es agregar un nuevo Job o Project con una imagen para ver si carga exitosamente el archivo
+
+![assets/130.png](assets/130.png)
+
+y despues de esto nos sale un error que indica que no existe o no es escribible, este error pasa por los permisos que tenemos en el computador 
+
+![assets/131.png](assets/131.png)
+
+Para configurar este permiso debemos ir a la ruta de public en la terminal y alli escribir `chmod 777 uploads/`, estos permisos son establecidos para Mac y Linux 
+
+![assets/132.png](assets/132.png)
+
+Nuevamente podemos realizar el cargue de los documentos 
+
+![assets/130.png](assets/130.png)
+
+y este va a aparecer en la carpeta **uploads**
+
+![assets/133.png](assets/133.png)
+
+Despues podemos verificar que el archivo guardado efectivamente ese dentro de la carpeta
+
+![assets/134.png](assets/134.png)
+
+Ahora como reto queda permitir un campo para nombrar el archivo que se esta subiendo y desplegarlo en la pagina principal

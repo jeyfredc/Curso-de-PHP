@@ -19,6 +19,15 @@ class JobsController extends BaseController{
             try{
                 $jobValidator->assert($postData); // true
                 $postData = $request->getParsedBody();
+
+                $files = $request->getUploadedFiles();
+                $logo = $files['logo'];
+
+                if($logo->getError() == UPLOAD_ERR_OK){
+                    $fileName = $logo->getClientFilename();
+                    $logo->moveTo("uploads/$fileName");
+                }
+
                 $job = new Job();
                 $job->title = $postData['title'];
                 $job->description = $postData['description'];
@@ -37,18 +46,27 @@ class JobsController extends BaseController{
             try{
                 $projectValidator->assert($postData); // true
                 $postData = $request->getParsedBody();
-            $project = new Project();
-            $project->title = $postData['title'];
-            $project->description = $postData['description'];
-            $project->save();
-            $responseMessage = 'Saved';
+
+                $files = $request->getUploadedFiles();
+                $logo = $files['logo'];
+
+                if($logo->getError() == UPLOAD_ERR_OK){
+                    $fileName = $logo->getClientFilename();
+                    $logo->moveTo("uploads/$fileName");
+                }
+
+                $project = new Project();
+                $project->title = $postData['title'];
+                $project->description = $postData['description'];
+                $project->save();
+                $responseMessage = 'Saved';
             }catch(\Exception $e){
-            $responseMessage = $e->getMessage();
+                $responseMessage = $e->getMessage();
             }
         }
 
         return $this->renderHTML('addJob.twig', [
-            'responseMessage' => $responseMessage
+            'responseMessage' => $responseMessage,
         ]);
     }
 }
