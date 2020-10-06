@@ -9,6 +9,7 @@
         "zendframework/zend-diactoros": "^2.2",
         "aura/router": "^3.1",
         "twig/twig": "^3.0",
-        "respect/validation": "^2.1"
+        "respect/validation": "^2.1",
+        "vlucas/phpdotenv": "^5.2"
     }
 }

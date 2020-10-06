@@ -95,7 +95,7 @@ Curso de php realizado en Platzi
 
 [Clase 47 Manejo de sesiones](#Clase-47-Manejo-de-sesiones)
 
-[]()
+[Clase 48 Variables de entorno](#Clase-48-Variables-de-entorno)
 
 []()
 
@@ -6642,3 +6642,378 @@ y nuevamente debe regresar a login
 ![assets/149.png](assets/149.png)
 
 Como reto queda proteger todas las rutas del mapeo y en vez de mostrar un mensaje de protected route hacer un redireccionamiento hacia login
+
+## Clase 48 Variables de entorno
+
+Hay un detalle en el codigo que hemos realizado que no es muy recomendable y tiene que ver con la conexion a la base de datos que estamos agregando a **index.php**. Es poco recomendable guardar los datos de las conexiones directamente en el codigo. Por el momento y por el aprendizaje esta bien usarlo de esta forma pero en un ambiente de produccion nadie quiere tener las variables de configuracion hardcodeadas(quiere decir escrito sobre el codigo). Lo que se quiere hacer es traer esas variables de algun lado.
+
+Los datos de configuración de la base de datos por ahora se encuentran hardcodeados. Utilizaremos variables de entorno(son variables que se establecen en todo el sistema operativo y despues pueden ser accedidas por la aplicacion) como una buena práctica para sacarlas de ahí.
+
+Utilizaremos esta dependencia para cargar las variables de entono en super variables: https://packagist.org/packages/vlucas/phpdotenv
+
+Ahora en la terminal ejecutamos para instalar la dependencia
+
+```
+php composer.phar require vlucas/phpdotenv
+```
+
+Despues debemos agregar un directorio con extension **.env** que vamos a crear dentro de la carpeta **curso_php** y en este archivo es donde podremos agregar nuestras variables de entorno.
+
+En esta agregaremo `DB_HOST` que va a ser el valor que vamos utilizar para obtener el host o la ubicacion de la base de datos y en este caso estamos utilizando `localhost`
+
+```
+DB_HOST=localhost
+```
+
+Despues de instalar guiandonos de la documentacion que esta en el archivo en nuestro **index.php** public despues de iniciar sesion agregamos 
+
+```
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
+$dotenv->load();
+```
+
+`__DIR__` indica que estamos en la ruta public, pero no queremos utilizar esta ruta para eso agregamos
+
+```
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__ . '/..');
+$dotenv->load();
+```
+
+Despues de esto para ver que esta pasando utilizamos
+
+```
+echo getenv('DB_HOST');
+die;
+
+```
+
+**index.php**
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once '../vendor/autoload.php';
+
+session_start();
+
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__ . '/..');
+$dotenv->load();
+
+echo getenv('DB_HOST');
+die;
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Aura\Router\RouterContainer;
+use Zend\Diactoros\Response\RedirectResponse;
+
+password_hash('superSecurePassword', PASSWORD_DEFAULT);
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => 'localhost',
+    'database'  => 'cursophp',
+    'username'  => 'root',
+    'password'  => '',
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
+
+$routerContainer = new RouterContainer();
+
+$map = $routerContainer->getMap();
+
+$map->get('index', '/curso_php/', [
+    'controller' => 'App\Controllers\IndexController',
+    'action' => 'indexAction',
+    'auth'=>true,]);
+
+$map->get('addJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction',
+    'auth'=>true,]);
+
+$map->post('saveJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction',
+    'auth'=>true,]);
+
+$map->get('addUsers', '/curso_php/signin', [
+    'controller' => 'App\Controllers\UsersController',
+    'action' => 'getAddUserAction']);
+
+$map->post('saveUsers', '/curso_php/signin', [
+    'controller' => 'App\Controllers\UsersController',
+    'action' => 'getAddUserAction']);
+
+$map->get('loginForm', '/curso_php/login', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'getLogin']);
+
+$map->post('auth', '/curso_php/auth', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'postLogin']);
+
+$map->get('logout', '/curso_php/logout', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'getLogout',
+    ]);
+
+$map->get('admin', '/curso_php/admin', [
+    'controller' => 'App\Controllers\AdminController',
+    'action' => 'getIndex',
+    'auth'=>true,]);
+
+
+$matcher = $routerContainer->getMatcher();
+
+$route = $matcher->match($request);
+
+function printElement($job) {
+    
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->title . '</h5>';  
+    echo '<p>' . $job->description. '</p>';
+    echo '<p>' . $job->getDurationAsString() . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+
+if(!$route){
+    echo 'No route';
+} else{
+    $handlerData = $route->handler; 
+    $controllerName = $handlerData['controller'];
+    $actionName = $handlerData['action'];
+    $needsAuth = $handlerData['auth'] ?? false;
+    $sessionUserId = $_SESSION['userId'] ?? null;
+
+    //Esto es para hacer una prueba. Si necesita autenticacion y no esta definido el userId imprime el mensaje de ruta protegida y luego se usa la palabra reservada die para terminar el script, esto solo es recomendable hacerlo para pruebas
+    if($needsAuth && !$sessionUserId){
+        $response = new RedirectResponse('/curso_php/login');
+    }else{
+        $controller = new $controllerName;
+        $response = $controller->$actionName($request);
+    }
+
+
+    //foreach significa que vamos a recorrer un arreglo
+    //Obtiene el encabezado que se han generado en las respuestas y los encabezados tienen un nombre que pueden contener mas de un valor, sin embargo cuando se tiene que imprimir se debe hacer uno por uno (nombre, valor)
+    foreach($response->getHeaders() as $name => $values)
+    {
+        foreach($values as $value){
+            //la funcion header es como se imprimen los encabezados, sprintf es una funcion nativa de PHP que permite imprimir cosas dentro de una cadena 
+            header(sprintf('%s: %s', $name, $value), false);
+        }
+    }
+    //La funcion http lo que hace es traer los codigos que nos da el servidor, codigos 200, 300, 400, 500 que nos dan informacion de como esta en ese momento
+    http_response_code($response->getStatusCode());
+
+    echo $response->getBody();
+}
+
+```
+
+Al cargar localhost nos va aparecer lo que estamos pasando por parametro
+
+![assets/150.png](assets/150.png)
+
+y ahora dentro de index.php empezamos a sustituir nuestras variables de la conexion con la base de datos y comentamos nuestra prueba
+
+```
+<?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_error', 1);
+error_reporting(E_ALL); 
+
+require_once '../vendor/autoload.php';
+
+session_start();
+
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__ . '/..');
+$dotenv->load();
+
+/* echo getenv('DB_HOST');
+die; */
+
+use Illuminate\Database\Capsule\Manager as Capsule;
+use Aura\Router\RouterContainer;
+use Zend\Diactoros\Response\RedirectResponse;
+
+password_hash('superSecurePassword', PASSWORD_DEFAULT);
+
+$capsule = new Capsule;
+
+$capsule->addConnection([
+    'driver'    => 'mysql',
+    'host'      => getenv('DB_HOST'),
+    'database'  => getenv('DB_NAME'),
+    'username'  => getenv('DB_USER'),
+    'password'  => getenv('DB_PASS'),
+    'charset'   => 'utf8',
+    'collation' => 'utf8_unicode_ci',
+    'prefix'    => '',
+]);
+
+// Make this Capsule instance available globally via static methods... (optional)
+$capsule->setAsGlobal();
+
+// Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
+$capsule->bootEloquent();
+
+$request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $_POST,
+    $_COOKIE,
+    $_FILES
+);
+
+$routerContainer = new RouterContainer();
+
+$map = $routerContainer->getMap();
+
+$map->get('index', '/curso_php/', [
+    'controller' => 'App\Controllers\IndexController',
+    'action' => 'indexAction',
+    'auth'=>true,]);
+
+$map->get('addJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction',
+    'auth'=>true,]);
+
+$map->post('saveJobs', '/curso_php/jobs/add', [
+    'controller' => 'App\Controllers\JobsController',
+    'action' => 'getAddJobAction',
+    'auth'=>true,]);
+
+$map->get('addUsers', '/curso_php/signin', [
+    'controller' => 'App\Controllers\UsersController',
+    'action' => 'getAddUserAction']);
+
+$map->post('saveUsers', '/curso_php/signin', [
+    'controller' => 'App\Controllers\UsersController',
+    'action' => 'getAddUserAction']);
+
+$map->get('loginForm', '/curso_php/login', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'getLogin']);
+
+$map->post('auth', '/curso_php/auth', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'postLogin']);
+
+$map->get('logout', '/curso_php/logout', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'getLogout',
+    ]);
+
+$map->get('admin', '/curso_php/admin', [
+    'controller' => 'App\Controllers\AdminController',
+    'action' => 'getIndex',
+    'auth'=>true,]);
+
+
+$matcher = $routerContainer->getMatcher();
+
+$route = $matcher->match($request);
+
+function printElement($job) {
+    
+    echo '<li class="work-position">';
+    echo '<h5>' . $job->title . '</h5>';  
+    echo '<p>' . $job->description. '</p>';
+    echo '<p>' . $job->getDurationAsString() . '<p>';
+    echo '<strong>Achievements:</strong>';
+    echo '<ul>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '<li>Lorem ipsum dolor sit amet, 80% consectetuer adipiscing elit.</li>';
+    echo '</ul>';
+    echo '</li>';
+  }
+
+if(!$route){
+    echo 'No route';
+} else{
+    $handlerData = $route->handler; 
+    $controllerName = $handlerData['controller'];
+    $actionName = $handlerData['action'];
+    $needsAuth = $handlerData['auth'] ?? false;
+    $sessionUserId = $_SESSION['userId'] ?? null;
+
+    //Esto es para hacer una prueba. Si necesita autenticacion y no esta definido el userId imprime el mensaje de ruta protegida y luego se usa la palabra reservada die para terminar el script, esto solo es recomendable hacerlo para pruebas
+    if($needsAuth && !$sessionUserId){
+        $response = new RedirectResponse('/curso_php/login');
+    }else{
+        $controller = new $controllerName;
+        $response = $controller->$actionName($request);
+    }
+
+
+    //foreach significa que vamos a recorrer un arreglo
+    //Obtiene el encabezado que se han generado en las respuestas y los encabezados tienen un nombre que pueden contener mas de un valor, sin embargo cuando se tiene que imprimir se debe hacer uno por uno (nombre, valor)
+    foreach($response->getHeaders() as $name => $values)
+    {
+        foreach($values as $value){
+            //la funcion header es como se imprimen los encabezados, sprintf es una funcion nativa de PHP que permite imprimir cosas dentro de una cadena 
+            header(sprintf('%s: %s', $name, $value), false);
+        }
+    }
+    //La funcion http lo que hace es traer los codigos que nos da el servidor, codigos 200, 300, 400, 500 que nos dan informacion de como esta en ese momento
+    http_response_code($response->getStatusCode());
+
+    echo $response->getBody();
+}
+
+
+```
+
+Y ahora estos valores tambien se deben agregar al archivo **.env**
+
+```
+DB_HOST=localhost
+DB_NAME=cursophp
+DB_USER=root
+DB_PASS=
+```
+
+Nuevamente cargamos nuestra ruta http://localhost/curso_php/ y debe aparecer todo lo que hemos realizado hasta el momento
+
+Tambien es una practica que las variables de entorno se compartan con los compañeros para saber que se tiene que configurar pero se hace a traves de un duplicado de **.env** que se puede nombrar como .**env.sample** dentro de la carpeta **curso_php** y este es el archivo que si se va a compartir, y este archivo puede tener cualquier dato dummie para expresar que es lo que se debe hacer
+
+```
+DB_HOST=YOURHOST
+DB_NAME=YOUR_DBNAME
+DB_USER=YOUR_USER
+DB_PASS=YOUR_PASS
+```
+
+el archivo **.env** no se debe compartir, ni pasar a nadie a menos de que sea parte del proyecto o equipo, por lo general siempre se coloca un archivo de ejemplo para guiar a las personas sobre lo que deben configurar con este archivo
