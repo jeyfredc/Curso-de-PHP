@@ -9,6 +9,8 @@ require_once '../vendor/autoload.php';
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Aura\Router\RouterContainer;
 
+password_hash('superSecurePassword', PASSWORD_DEFAULT);
+
 $capsule = new Capsule;
 
 $capsule->addConnection([
@@ -51,6 +53,14 @@ $map->get('addJobs', '/curso_php/jobs/add', [
 $map->post('saveJobs', '/curso_php/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
     'action' => 'getAddJobAction']);
+
+$map->get('addUsers', '/curso_php/login', [
+    'controller' => 'App\Controllers\UsersController',
+    'action' => 'getAddUserAction']);
+
+$map->post('saveUsers', '/curso_php/login', [
+    'controller' => 'App\Controllers\UsersController',
+    'action' => 'getAddUserAction']);
 
 $matcher = $routerContainer->getMatcher();
 

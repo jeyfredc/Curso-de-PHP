@@ -2,8 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\Job;
-use App\Models\Project;
+use App\Models\{Job, Project};
 use Respect\Validation\Validator as v;
 
 
@@ -60,7 +59,7 @@ class JobsController extends BaseController{
                 $project->description = $postData['description'];
                 $project->save();
                 $responseMessage = 'Saved';
-            }catch(\Exception $e){
+                }catch(\Exception $e){
                 $responseMessage = $e->getMessage();
             }
         }
