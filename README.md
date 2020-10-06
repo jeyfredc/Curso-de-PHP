@@ -85,7 +85,7 @@ Curso de php realizado en Platzi
 
 [Clase 42 Ejemplo de subida de archivos](#Clase-42-Ejemplo-de-subida-de-archivos)
 
-[]()
+[Clase 43 Tips de seguridad para subir archivos en PHP](#Clase-43-Tips-de-seguridad-para-subir-archivos-en-PHP)
 
 []()
 
@@ -5877,3 +5877,51 @@ Despues podemos verificar que el archivo guardado efectivamente ese dentro de la
 ![assets/134.png](assets/134.png)
 
 Ahora como reto queda permitir un campo para nombrar el archivo que se esta subiendo y desplegarlo en la pagina principal
+
+## Clase 43 Tips de seguridad para subir archivos en PHP
+
+Cuando permites subir archivos a tu servidor, estas exponiendote a posibles ataques o hackeos, por eso es muy importante tratar de tener cuidado con la forma en la que almacenamos los archivos.
+
+Existen muchas formas de protegernos, pero aun asi, aqui te dejo algunos tips para que tengas mas tranquilidad a la hora de permitir que usuarios suban archivos a tus aplicaciones:
+
+**De ser posible almacena los archivos en un servicio externo a tu aplicación como Amazon S3.**
+--
+
+Un ataque muy común es tratar de subir un archivo que no es lo que nosotros esperamos, un atacante podría intentar subir un archivo PHP para que al mandarlo llamar el tenga acceso al servidor, pero si almacenamos los archivos en otro sitio él no tendrá acceso a nuestro servidor.
+
+**Cuida los permisos.**
+--
+
+Cuando subimos un archivo podemos usar la función chmod para cambiar los permisos e indicarle al sistema operativo que ese archivo no es ejecutable.
+
+**Verifica el tipo de archivo que están subiendo.**
+--
+
+Podemos verificar la extensión del archivo, el mime type y lo encabezados para validar que el archivo es del tipo que estamos pidiendo.
+
+**Limita el tamaño de los archivos permitidos**
+--
+
+Dependiendo de tu aplicación, tu puedes saber qué tamaño de archivo es razonable, de ser así, limita el tamaño de la subida de archivos.
+
+**Si tu aplicación usa login**
+--
+
+Solo permite que los usuarios registrados hagan la subida de archivos.
+
+**Genera un nombre de archivo aleatorio y añade la extensión previamente generada.**
+--
+
+Muchas veces los atacantes trataran de esconder sus archivos, tu puedes cambiar el nombre de un archivo y poner otro que para ti sea claro que es un archivo subido por un usuario.
+
+**No confíes sólo en una validación por el lado del cliente, no es suficiente.**
+--
+
+Lo ideal es implementar una seguridad tanto por el lado del cliente como por el lado del servidor. También podemos comenzar validaciones del lado del cliente usando javascript, sin duda son buenas, pero es relativamente sencillo sobrepasarse y enviar un archivo malicioso.
+
+**No uses solo una medida de protección.**
+--
+
+Combina todas las que te sean posibles para tener mayor seguridad en tu app.
+
+Si conoces otro tip compártelo con todos en la sección de discusiones.
