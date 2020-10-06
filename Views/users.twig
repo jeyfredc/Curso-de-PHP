@@ -1,0 +1,21 @@
+    {% extends "layout.twig" %}
+
+
+    {% block content %} 
+    <h1>Login</h1>
+    {% if responseMessage %}
+        <div class="alert alert-primary" role="alert">
+            {{ responseMessage }}
+        </div>
+    {% endif %}
+
+    <form action="/curso_php/sigin" method="post" enctype="multipart/form-data">
+        <label for="">Email</label><br>
+        <input type="text" name="email"><br>
+        <label for="">Password</label><br>
+        <input type="password" name="password"><br>
+        <button type="submit" class="btn btn-primary">Sign In</button>
+    </form>
+
+
+    {% endblock %}

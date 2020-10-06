@@ -54,13 +54,17 @@ $map->post('saveJobs', '/curso_php/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
     'action' => 'getAddJobAction']);
 
-$map->get('addUsers', '/curso_php/login', [
+$map->get('addUsers', '/curso_php/sigin', [
     'controller' => 'App\Controllers\UsersController',
     'action' => 'getAddUserAction']);
 
-$map->post('saveUsers', '/curso_php/login', [
+$map->post('saveUsers', '/curso_php/sigin', [
     'controller' => 'App\Controllers\UsersController',
     'action' => 'getAddUserAction']);
+
+$map->get('loginForm', '/curso_php/login', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'getLogin']);
 
 $matcher = $routerContainer->getMatcher();
 

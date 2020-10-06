@@ -89,7 +89,7 @@ Curso de php realizado en Platzi
 
 [Clase 44 Reto. Creación de usuarios](#Clase-44-Reto-Creación-de-usuarios)
 
-[]()
+[Clase 45 Autenticando usuarios](#Clase-45-Autenticando-usuarios)
 
 []()
 
@@ -5933,3 +5933,29 @@ Vamos a continuar el proyecto creando un sistema de autenticacion para que no cu
 Para eso necesitamos crear ususarios en nuestra base de datos para esto se debe crear un formulario como el que tenemos para Jobs, crear una tabla users como la que se usa pára Jobs que contenga un campo de email y un campo password y se almacenen esos datos que se utilizaran dentro de esa tabla que despues se utilizara.
 
 para los password nunca debemos almacenarlos en texto plano porque  de alguna forma si alguien llega a tener acceso, los usuarios estarian vulnerables, lo que se debe hacer es encriptar las contraseñas, entonces cuando se vaya a guardar el usuario en la base de datos antes de guardarlo se debe utilizar un metodo de PHP llamado Password hash  `password_hash('superSecurePassword', PASSWORD_DEFAULT);`, esta se encuentra en la pagina oficial de PHP https://www.php.net/manual/es/function.password-hash.php 
+
+## Clase 45 Autenticando usuarios
+
+Despues de haber realizado el reto anterior prepararemos el controlador AuthController y la ruta /auth en nuestro archivo **index.php** de la carpeta **public**
+
+```
+$map->get('loginForm', '/curso_php/login', [
+    'controller' => 'App\Controllers\AuthController',
+    'action' => 'getLogin']);
+```
+
+Ahora en la carpeta **Controllers**, creamos nuestro constrolador **AuthController.php**
+
+```
+
+```
+
+Ahora en la carpeta **Views**, creamos la vista **login.twig**
+
+```
+
+```
+
+Utilizaremos Eloquent para acceder a la tabla User de la base de datos y obtener el password, para después compararlo y ejecutar la validación.
+
+Las validaciones de password las haremos con la función password_verify()
