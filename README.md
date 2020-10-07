@@ -101,6 +101,7 @@ Curso de php realizado en Platzi
 
 [Clase 50 Instalación de pgAdmin](#Clase-50-Instalación-de-pgAdmin)
 
+[Clase 51 Creando la base de datos en Heroku](#Clase-51-Creando-la-base-de-datos-en-Heroku)
 
 
 ## Clase 1 Presentación del curso
@@ -7117,3 +7118,51 @@ Para este último, necesitamos una herramienta para gestionar la base de datos, 
 ![assets/169.jpg](assets/169.jpg)
 
 7. Por ultimo selecciona **save**
+
+## Clase 51 Creando la base de datos en Heroku
+
+Configuremos los datos de conexión de base de datos en pgAdmin que nos proveerá de un entorno gráfico para manejar más fácil nuestra base de datos.
+
+Crearemos las tablas que corresponden a nuestra base de datos.
+
+En nuestra terminal debemos agregar tambien los datos que se encuentran en las credenciales de Heroku
+
+```
+heroku config:set DB_DRIVE=pgsql
+heroku config:set DB_HOST={hostname}
+heroku config:set DB_NAME={database-name}
+heroku config:set DB_USER={user}
+heroku config:set DB_PASS={password}
+heroku config:set DB_PORT=5432
+```
+
+![assets/170.png](assets/170.png)
+
+y en nuestro servidor de base de datos desplegar la informacion que tenemos
+
+![assets/171.png](assets/171.png)
+
+mi base de datos es la d7v7lfn8cvv29
+
+![assets/172.png](assets/172.png)
+
+esta la debemos buscar dentro del despliegue de bases de datos de Postgresql
+
+![assets/173.png](assets/173.png)
+
+Postgresql tiene un sistema diferente al de Mysql y aqui se maneja un concepto de esquema, y el esquema principal es el esquema publico y este ya puede contener tablas, alli vamos a dar click derecho y luego en create table
+
+![assets/174.png](assets/174.png)
+
+en Name vamos a colocar **jobs**
+
+![assets/175.png](assets/175.png)
+
+luego seleccionamos la pestaña **Columns** que es donde podemos agregar columnas damos click en **+** y en Name colocamos id, en Postgresql el auto incremental se selecciona como bigserial y luego damos click para que sea Not Null  y que sea una llave primaria
+
+![assets/176.png](assets/176.png)
+
+Por ultimo en nuestro archivo .env pegamos todo la configuracion que tenemos de Heroku
+
+![assets/177.png](assets/177.png)
+
