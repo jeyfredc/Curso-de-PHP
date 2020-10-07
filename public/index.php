@@ -47,6 +47,7 @@ $request = Zend\Diactoros\ServerRequestFactory::fromGlobals(
     $_FILES
 );
 
+
 $routerContainer = new RouterContainer();
 
 $map = $routerContainer->getMap();

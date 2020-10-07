@@ -5,6 +5,7 @@
         }
     },
     "require": {
+        "silex/silex": "~1.1",
         "illuminate/database": "^8.6",
         "zendframework/zend-diactoros": "^2.2",
         "aura/router": "^3.1",
