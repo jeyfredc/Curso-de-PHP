@@ -54,7 +54,7 @@ $map = $routerContainer->getMap();
 $map->get('index', '/curso-php-jeyfredc/', [
     'controller' => 'App\Controllers\IndexController',
     'action' => 'indexAction',
-    'auth'=>true,]);
+    'auth'=>false,]);
 
 $map->get('addJobs', '/curso-php-jeyfredc/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
