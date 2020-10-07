@@ -6872,11 +6872,12 @@ password_hash('superSecurePassword', PASSWORD_DEFAULT);
 $capsule = new Capsule;
 
 $capsule->addConnection([
-    'driver'    => 'mysql',
-    'host'      => getenv('DB_HOST'),
     'database'  => getenv('DB_NAME'),
-    'username'  => getenv('DB_USER'),
+    'driver'    => getenv('DB_DRIVER'),
+    'host'      => getenv('DB_HOST'),
     'password'  => getenv('DB_PASS'),
+    'port'      => getenv('DB_PORT'),
+    'username'  => getenv('DB_USER'),
     'charset'   => 'utf8',
     'collation' => 'utf8_unicode_ci',
     'prefix'    => '',
@@ -7019,6 +7020,12 @@ DB_PASS=YOUR_PASS
 
 el archivo **.env** no se debe compartir, ni pasar a nadie a menos de que sea parte del proyecto o equipo, por lo general siempre se coloca un archivo de ejemplo para guiar a las personas sobre lo que deben configurar con este archivo
 
+Se debe agregar un archivo a la carpeta curso_php llamado **Procfile**, este contiene la siguiente linea de codigo y se guarda
+
+`web: vendor/bin/heroku-php-apache2 public/`
+
+**Nota:** Es importante que cada cambio que vayamos haciendo en el proyecto se guarde con `git add .`, luego `git commit -am "Comentario que se requiera actualizar"` y por ultimo `git push heroku master` e ir probando que cada cosa que hacemos este funcionando.
+
 ## Clase 50 Deploy en Heroku
 
 Ahora que ya estan configuradas las variables de entorno se puede enviar el codigo a un servidor de produccion. El termino mas conocido para hacer esto es **Deploy**.
@@ -7088,6 +7095,8 @@ Alli se van a desplegar varios datos parecidos a esto
 ![assets/164.png](assets/164.png)
 
 Por el momento tenerlos presentes porque en la proxima clase se va a realizar la instalacion de Postgresql para seguir configurando el deploy del proyecto
+
+**Nota:** Es importante que cada cambio que vayamos haciendo en el proyecto se guarde con `git add .`, luego `git commit -am "Comentario que se requiera actualizar"` y por ultimo `git push heroku master` e ir probando que cada cosa que hacemos este funcionando.
 
 ## Clase 50 Instalación de pgAdmin
 
@@ -7166,3 +7175,6 @@ Por ultimo en nuestro archivo .env pegamos todo la configuracion que tenemos de 
 
 ![assets/177.png](assets/177.png)
 
+**Nota 1:** Las bases de datos que tengamos creadas en nuestro proyecto tambien deben ser creadas en Postgresql es decir para mi caso tengo **jobs**, **projects** y **users**
+
+**Nota 2:** Es importante que cada cambio que vayamos haciendo en el proyecto se guarde con `git add .`, luego `git commit -am "Comentario que se requiera actualizar"` y por ultimo `git push heroku master` e ir probando que cada cosa que hacemos este funcionando.
