@@ -51,43 +51,43 @@ $routerContainer = new RouterContainer();
 
 $map = $routerContainer->getMap();
 
-$map->get('index', '/', [
+$map->get('index', '/curso-php-jeyfredc/', [
     'controller' => 'App\Controllers\IndexController',
     'action' => 'indexAction',
     'auth'=>true,]);
 
-$map->get('addJobs', '/jobs/add', [
+$map->get('addJobs', '/curso-php-jeyfredc/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
     'action' => 'getAddJobAction',
     'auth'=>true,]);
 
-$map->post('saveJobs', '/jobs/add', [
+$map->post('saveJobs', '/curso-php-jeyfredc/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
     'action' => 'getAddJobAction',
     'auth'=>true,]);
 
-$map->get('addUsers', '/signin', [
+$map->get('addUsers', '/curso-php-jeyfredc/signin', [
     'controller' => 'App\Controllers\UsersController',
     'action' => 'getAddUserAction']);
 
-$map->post('saveUsers', '/signin', [
+$map->post('saveUsers', '/curso-php-jeyfredc/signin', [
     'controller' => 'App\Controllers\UsersController',
     'action' => 'getAddUserAction']);
 
-$map->get('loginForm', '/login', [
+$map->get('loginForm', '/curso-php-jeyfredc/login', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'getLogin']);
 
-$map->post('auth', '/auth', [
+$map->post('auth', '/curso-php-jeyfredc/auth', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'postLogin']);
 
-$map->get('logout', '/logout', [
+$map->get('logout', '/curso-php-jeyfredc/logout', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'getLogout',
     ]);
 
-$map->get('admin', '/admin', [
+$map->get('admin', '/curso-php-jeyfredc/admin', [
     'controller' => 'App\Controllers\AdminController',
     'action' => 'getIndex',
     'auth'=>true,]);
@@ -123,7 +123,7 @@ if(!$route){
 
     //Esto es para hacer una prueba. Si necesita autenticacion y no esta definido el userId imprime el mensaje de ruta protegida y luego se usa la palabra reservada die para terminar el script, esto solo es recomendable hacerlo para pruebas
     if($needsAuth && !$sessionUserId){
-        $response = new RedirectResponse('/login');
+        $response = new RedirectResponse('/curso-php-jeyfredc/login');
     }else{
         $controller = new $controllerName;
         $response = $controller->$actionName($request);
