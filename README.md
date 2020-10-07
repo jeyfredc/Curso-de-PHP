@@ -97,9 +97,9 @@ Curso de php realizado en Platzi
 
 [Clase 48 Variables de entorno](#Clase-48-Variables-de-entorno)
 
-[]()
+[Clase 49 Deploy en Heroku](#Clase-49-Deploy-en-Heroku)
 
-[]()
+[Clase 50 Instalación de pgAdmin](#Clase-50-Instalación-de-pgAdmin)
 
 
 
@@ -7017,3 +7017,103 @@ DB_PASS=YOUR_PASS
 ```
 
 el archivo **.env** no se debe compartir, ni pasar a nadie a menos de que sea parte del proyecto o equipo, por lo general siempre se coloca un archivo de ejemplo para guiar a las personas sobre lo que deben configurar con este archivo
+
+## Clase 50 Deploy en Heroku
+
+Ahora que ya estan configuradas las variables de entorno se puede enviar el codigo a un servidor de produccion. El termino mas conocido para hacer esto es **Deploy**.
+
+En este caso vamos a utilizar un servicio llamado **Heroku** que ofrece una capa gratuita tanto de servidores como de base de datos para poder hacer pruebas de la aplicacion.
+
+Se debe hacer el registro en la pagina de Heroku https://www.heroku.com/
+
+Cuando este Logueado en Heroku vamos a dar click en **Create new app** 
+
+![assets/151.png](assets/151.png)
+
+Luego crear un nombre para la aplicacion en mi caso le puse curso-php-jeyfredc, pero este nombre no puede estar repetido asi que pueden colocar otro y elegir el servidor que en mi caso elegi United States
+
+![assets/152.png](assets/152.png)
+
+despues debemos conectar nuestra aplicacion con Heroku y esta aplicacion la conectamos mediante Git,se deben seguir las instrucciones que especifica la pagina iniciando por la instalacion de **Heroku_CLI** https://devcenter.heroku.com/articles/heroku-cli
+
+![assets/153.png](assets/153.png)
+
+Despues de haber instalado Heroku debemos loguearnos en la terminal con `heroku login`
+
+![assets/154.png](assets/154.png)
+
+y ahora debemos colocar `heroku git:remote -a curso-php-jeyfredc`, esto es segun como se vayan indicando las instrucciones en la pagina de heroku
+
+Con `git remote` podemos ver los remotos que estan configurados, origin es donde estoy subiendo el proyecto del curso y heroku es donde se va a hacer deploy de la aplicacion
+
+![assets/155.png](assets/155.png)
+
+Ahora lo que hay que hacer es enviar nuestro codigo a heroku en este caso mi unica rama es master y la envio con esta sentencia en la terminal `git push heroku master`
+
+![assets/156.png](assets/156.png) 
+
+y despues podemos ver como hace el envio o push a heroku, por ultimo al final de la ejecucion de heroku en la terminal nos da la direccion donde hicimos deploy
+
+![assets/157.png](assets/157.png)
+
+Todavia hace falta hacer la configuracion de las variables de entorno en Heroku para eso vamos a dar click en el cuadro con puntos y seleccionar Dashboard
+
+![assets/158.png](assets/158.png)
+
+y luego vamos a seleccionar nuestro proyecto que en mi caso es curso-php-jeyfredc
+
+Luego nos dirigimos hacia la parte de **Resources**
+
+![assets/159.png](assets/159.png)
+
+alli buscamos en **Add-ons** a Heroku Postgres y damos click sobre **Submit Orden Form**
+
+![assets/160.png](assets/160.png)
+
+Despues damos click sobre **Heroku Postgress**
+
+![assets/161.png](assets/161.png)
+
+Despues damos click sobre **Settings**
+
+![assets/162.png](assets/162.png)
+
+Despues damos click sobre **View Credentials..**
+
+![assets/163.png](assets/163.png)
+
+Alli se van a desplegar varios datos parecidos a esto
+
+![assets/164.png](assets/164.png)
+
+Por el momento tenerlos presentes porque en la proxima clase se va a realizar la instalacion de Postgresql para seguir configurando el deploy del proyecto
+
+## Clase 50 Instalación de pgAdmin
+
+Postgresql es una base de datos muy popular, probablemente MySQL y Postgresql son las más importantes hoy en dia.
+
+Cuando desarrollamos nuestro proyecto usamos phpMyAdmin para administrar nuestra base de datos en MariaDB/MySQL, ahora que haremos el deploy utilizaremos Postgresql en Heroku.
+
+Para este último, necesitamos una herramienta para gestionar la base de datos, en esta clase hablaremos de como instalar pgAdmin.
+
+1. Visita el sitio https://www.pgadmin.org/ y descarga la version de pgAdmin4 que va con tu sistema operativo.
+
+2. Instala la aplicación.
+
+3. Abre la aplicación y dale click en el link que dice agregar servidor.
+
+![assets/166.jpg](assets/166.jpg)
+
+4. Ponle un nombre a tu servidor, este nombre lo defines tú.
+
+![assets/167.jpg](assets/167.jpg)
+
+5. Ingresar los datos de las credenciales de Heroku a Postgresql
+
+![assets/165.png](assets/165.png)
+
+6. Si estás usando una base de datos de Heroku, habilita el SSL en modo require.
+
+![assets/169.jpg](assets/169.jpg)
+
+7. Por ultimo selecciona **save**
