@@ -2,4 +2,3 @@
 vendor/
 ._composer.phar
 composer.phar
-.env
