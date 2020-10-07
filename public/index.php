@@ -51,43 +51,43 @@ $routerContainer = new RouterContainer();
 
 $map = $routerContainer->getMap();
 
-$map->get('index', '/curso_php/', [
+$map->get('index', '/curso-php-jeyfredc/', [
     'controller' => 'App\Controllers\IndexController',
     'action' => 'indexAction',
     'auth'=>true,]);
 
-$map->get('addJobs', '/curso_php/jobs/add', [
+$map->get('addJobs', '/curso-php-jeyfredc/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
     'action' => 'getAddJobAction',
     'auth'=>true,]);
 
-$map->post('saveJobs', '/curso_php/jobs/add', [
+$map->post('saveJobs', '/curso-php-jeyfredc/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
     'action' => 'getAddJobAction',
     'auth'=>true,]);
 
-$map->get('addUsers', '/curso_php/signin', [
+$map->get('addUsers', '/curso-php-jeyfredc/signin', [
     'controller' => 'App\Controllers\UsersController',
     'action' => 'getAddUserAction']);
 
-$map->post('saveUsers', '/curso_php/signin', [
+$map->post('saveUsers', '/curso-php-jeyfredc/signin', [
     'controller' => 'App\Controllers\UsersController',
     'action' => 'getAddUserAction']);
 
-$map->get('loginForm', '/curso_php/login', [
+$map->get('loginForm', '/curso-php-jeyfredc/login', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'getLogin']);
 
-$map->post('auth', '/curso_php/auth', [
+$map->post('auth', '/curso-php-jeyfredc/auth', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'postLogin']);
 
-$map->get('logout', '/curso_php/logout', [
+$map->get('logout', '/curso-php-jeyfredc/logout', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'getLogout',
     ]);
 
-$map->get('admin', '/curso_php/admin', [
+$map->get('admin', '/curso-php-jeyfredc/admin', [
     'controller' => 'App\Controllers\AdminController',
     'action' => 'getIndex',
     'auth'=>true,]);
@@ -123,7 +123,7 @@ if(!$route){
 
     //Esto es para hacer una prueba. Si necesita autenticacion y no esta definido el userId imprime el mensaje de ruta protegida y luego se usa la palabra reservada die para terminar el script, esto solo es recomendable hacerlo para pruebas
     if($needsAuth && !$sessionUserId){
-        $response = new RedirectResponse('/curso_php/login');
+        $response = new RedirectResponse('/curso-php-jeyfredc/login');
     }else{
         $controller = new $controllerName;
         $response = $controller->$actionName($request);
