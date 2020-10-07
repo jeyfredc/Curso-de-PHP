@@ -51,43 +51,43 @@ $routerContainer = new RouterContainer();
 
 $map = $routerContainer->getMap();
 
-$map->get('index', '/curso_php/', [
+$map->get('index', '/', [
     'controller' => 'App\Controllers\IndexController',
     'action' => 'indexAction',
     'auth'=>true,]);
 
-$map->get('addJobs', '/curso_php/jobs/add', [
+$map->get('addJobs', '/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
     'action' => 'getAddJobAction',
     'auth'=>true,]);
 
-$map->post('saveJobs', '/curso_php/jobs/add', [
+$map->post('saveJobs', '/jobs/add', [
     'controller' => 'App\Controllers\JobsController',
     'action' => 'getAddJobAction',
     'auth'=>true,]);
 
-$map->get('addUsers', '/curso_php/signin', [
+$map->get('addUsers', '/signin', [
     'controller' => 'App\Controllers\UsersController',
     'action' => 'getAddUserAction']);
 
-$map->post('saveUsers', '/curso_php/signin', [
+$map->post('saveUsers', '/signin', [
     'controller' => 'App\Controllers\UsersController',
     'action' => 'getAddUserAction']);
 
-$map->get('loginForm', '/curso_php/login', [
+$map->get('loginForm', '/login', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'getLogin']);
 
-$map->post('auth', '/curso_php/auth', [
+$map->post('auth', '/auth', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'postLogin']);
 
-$map->get('logout', '/curso_php/logout', [
+$map->get('logout', '/logout', [
     'controller' => 'App\Controllers\AuthController',
     'action' => 'getLogout',
     ]);
 
-$map->get('admin', '/curso_php/admin', [
+$map->get('admin', '/admin', [
     'controller' => 'App\Controllers\AdminController',
     'action' => 'getIndex',
     'auth'=>true,]);
