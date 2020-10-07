@@ -123,7 +123,7 @@ if(!$route){
 
     //Esto es para hacer una prueba. Si necesita autenticacion y no esta definido el userId imprime el mensaje de ruta protegida y luego se usa la palabra reservada die para terminar el script, esto solo es recomendable hacerlo para pruebas
     if($needsAuth && !$sessionUserId){
-        $response = new RedirectResponse('/curso-php-jeyfredc/login');
+        $response = new RedirectResponse('/login');
     }else{
         $controller = new $controllerName;
         $response = $controller->$actionName($request);
