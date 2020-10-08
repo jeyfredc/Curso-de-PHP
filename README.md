@@ -7181,7 +7181,7 @@ Por ultimo en nuestro archivo .env pegamos todo la configuracion que tenemos de 
 
 ___
 
-¿Quieres conocer mas proyectos?
+**¿Quieres conocer mas proyectos?**
 
 ![assets/img-portafolio.png](assets/img-portafolio.png)
 
