@@ -7178,3 +7178,12 @@ Por ultimo en nuestro archivo .env pegamos todo la configuracion que tenemos de 
 **Nota 1:** Las bases de datos que tengamos creadas en nuestro proyecto tambien deben ser creadas en Postgresql es decir para mi caso tengo **jobs**, **projects** y **users**
 
 **Nota 2:** Es importante que cada cambio que vayamos haciendo en el proyecto se guarde con `git add .`, luego `git commit -am "Comentario que se requiera actualizar"` y por ultimo `git push heroku master` e ir probando que cada cosa que hacemos este funcionando.
+
+--
+
+¿Quieres conocer mas proyectos?
+
+![assets/img-portafolio.png](assets/img-portafolio.png)
+
+Aqui puedes visualizar mi portafolio creado con HTML, CSS y JS, contiene varios proyectos realizados en diferentes lenguajes de programación
+https://jeyfredc.github.io/Portafolio/Css-Portafolio/
