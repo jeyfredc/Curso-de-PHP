@@ -7179,7 +7179,7 @@ Por ultimo en nuestro archivo .env pegamos todo la configuracion que tenemos de 
 
 **Nota 2:** Es importante que cada cambio que vayamos haciendo en el proyecto se guarde con `git add .`, luego `git commit -am "Comentario que se requiera actualizar"` y por ultimo `git push heroku master` e ir probando que cada cosa que hacemos este funcionando.
 
---
+__
 
 ¿Quieres conocer mas proyectos?
 
